@@ -89,26 +89,39 @@
     </main>
 
     <!-- ✅ SCRIPT ACTIF -->
-    <script>
-      const API_URL = "/api/astrofood-ai";
-      const out = document.getElementById("ai-output");
+  <script>
+  const API_URL = "/api/astrofood-ai";
+  const out = document.getElementById("ai-output");
 
-      document.getElementById("btn-recipe").addEventListener("click", async () => {
-        const sign = document.getElementById("sign").value;
-        const lang = document.getElementById("lang").value;
-        out.textContent = "🍳 Génération...";
-        try {
-          const res = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ sign, lang })
-          });
-          const data = await res.json();
-          out.textContent = data.text || "❌ pas de texte reçu";
-        } catch (e) {
-          out.textContent = "❌ Erreur API : " + e.message;
-        }
+  document.getElementById("btn-recipe").addEventListener("click", async () => {
+    const sign = document.getElementById("sign").value;
+    const lang = document.getElementById("lang").value;
+    out.textContent = "🍳 Génération...";
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sign, lang })
       });
-    </script>
+
+      const data = await res.json();
+
+      if (data.text) {
+        out.textContent = data.text;
+      } else if (data.error) {
+        out.textContent = "❌ Erreur : " + data.error;
+      } else {
+        out.textContent = "❌ Réponse inconnue du serveur :\n" + JSON.stringify(data, null, 2);
+      }
+    } catch (e) {
+      out.textContent = "❌ Erreur API (front) : " + e.message;
+    }
+  });
+
+  // bouton chat = juste un message pour l’instant
+  document.getElementById("btn-chat").addEventListener("click", () => {
+    out.textContent = "💬 Le mode chat IA n'est pas encore activé (on protège les tokens).";
+  });
+</script>
   </body>
 </html>
