@@ -37,7 +37,7 @@ export default async function handler(req, res) {
 
   try {
     // ✅ endpoint adapté aux clés de projet
-    const r = await fetch("https://api.openai.com/v1/responses", {
+  const resp = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -45,19 +45,18 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         // si jamais ton projet n'a pas "gpt-4o-mini", mets "gpt-4o"
-        model: "gpt-4o-mini",
-        input: [
-          {
-            role: "system",
-            content:
-              "Tu es Chef-AI d'AstroFood. Tu génères des recettes astrologiques courtes, avec un titre, ingrédients et préparation. Tu peux utiliser bouye, bissap, mil."
-          },
-          {
-            role: "user",
-            content: `Génère une recette complète pour le signe ${sign} en ${lang}.`
-          }
-        ],
-        max_output_tokens: 280
+       model: "gpt-4o-mini",
+messages: [
+  {
+    role: "system",
+    content: "Tu es Chef-AI d'AstroFood. Tu génères des recettes astrologiques avec des ingrédients africains."
+  },
+  {
+    role: "user",
+    content: `Génère une recette complète pour le signe ${sign} en ${lang}.`
+  }
+],
+max_tokens: 280
       })
     });
 
