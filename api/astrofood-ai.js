@@ -60,18 +60,21 @@ export default async function handler(req, res) {
       }),
     });
 
-    const data = await response.json();
-
     // 🟠 Erreur claire d’OpenAI
-    if (data.error) {
-      return res.status(200).json({
-        ok: false,
-        text:
-          "❌ OpenAI a répondu : " +
-          data.error.message +
-          "\n➡️ Si la clé est correcte, ce projet n’a peut-être pas accès à 'gpt-4o-mini'.",
-      });
-    }
+  const data = await response.json();
+
+if (data.error) {
+  // quota dépassé → message clair + fallback local pour ne pas casser l'UX
+  if (data.error.code === "insufficient_quota") {
+    const local = `🔒 Quota OpenAI épuisé.
+Recette de secours pour ${sign} (${lang}) :
+• Titre : Yassa veggie citron & bissap
+• Ingrédients : oignons, citron, moutarde, poivron, piment doux, huile
+• Préparation : mariner 20 min, saisir 6–8 min, déglacer, mijoter 10 min. Servir avec riz/miélé de mil.`;
+    return res.status(200).json({ ok: false, text: local });
+  }
+  return res.status(200).json({ ok: false, text: "❌ OpenAI : " + data.error.message });
+}
 
     // 🟢 Récupération du texte
     const text =
