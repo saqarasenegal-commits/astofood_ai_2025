@@ -1,5 +1,6 @@
+
 export default async function handler(req, res) {
-  // CORS
+  // --- CORS ---
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -8,14 +9,14 @@ export default async function handler(req, res) {
     return res.status(204).end();
   }
 
-  // 🔎 mode debug
+  // --- MODE DEBUG ---
   if (req.method === "GET" && (req.url.includes("debug=1") || req.query?.debug === "1")) {
     const apiKey = process.env.OPENAI_API_KEY;
     return res.status(200).json({
       ok: true,
       hasKey: !!apiKey,
-      keyPreview: apiKey ? apiKey.slice(0, 6) + "..." : null,
-      env: process.env.VERCEL_ENV || "unknown"
+      keyPreview: apiKey ? apiKey.slice(0, 8) + "..." : null,
+      env: process.env.VERCEL_ENV || "unknown",
     });
   }
 
@@ -27,79 +28,75 @@ export default async function handler(req, res) {
   if (!apiKey) {
     return res.status(200).json({
       ok: false,
-      text: "⚠️ IA non activée (clé manquante)."
+      text: "⚠️ Aucune clé API détectée dans les variables d'environnement (OPENAI_API_KEY).",
     });
   }
 
-  const body = req.body || {};
-  const sign = body.sign || "Poissons";
-  const lang = body.lang || "fr";
+  // --- Lecture du corps de la requête ---
+  const { sign = "Poissons", lang = "fr" } = req.body || {};
 
   try {
-    // ✅ endpoint adapté aux clés de projet
-  const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+    // ✅ Endpoint compatible avec sk-proj
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // si jamais ton projet n'a pas "gpt-4o-mini", mets "gpt-4o"
-       model: "gpt-4o-mini",
-messages: [
-  {
-    role: "system",
-    content: "Tu es Chef-AI d'AstroFood. Tu génères des recettes astrologiques avec des ingrédients africains."
-  },
-  {
-    role: "user",
-    content: `Génère une recette complète pour le signe ${sign} en ${lang}.`
-  }
-],
-max_tokens: 280
-      })
+        model: "gpt-4o-mini", // tu peux essayer "gpt-4o" si ce modèle n'est pas dispo
+        messages: [
+          {
+            role: "system",
+            content:
+              "Tu es Chef-AI d'AstroFood. Tu génères des recettes astrologiques inspirées du Sénégal, avec un titre, les ingrédients et les étapes courtes.",
+          },
+          {
+            role: "user",
+            content: `Prépare une recette complète adaptée au signe ${sign} en ${lang}.`,
+          },
+        ],
+        max_tokens: 300,
+      }),
     });
 
-    const data = await r.json();
+    const data = await response.json();
 
-    // 1) OpenAI a renvoyé une erreur claire → on l’affiche dans la page
+    // 🟠 Erreur claire d’OpenAI
     if (data.error) {
       return res.status(200).json({
         ok: false,
         text:
           "❌ OpenAI a répondu : " +
           data.error.message +
-          "\n➡️ Ça veut dire que la clé est bonne, mais que ce projet n'a pas ce modèle, ou qu'il faut en choisir un autre."
+          "\n➡️ Si la clé est correcte, ce projet n’a peut-être pas accès à 'gpt-4o-mini'.",
       });
     }
 
-    // 2) format /v1/responses
+    // 🟢 Récupération du texte
     const text =
-      data?.output?.[0]?.content?.[0]?.text ||
-      data?.output_text ||
       data?.choices?.[0]?.message?.content ||
+      data?.output_text ||
       null;
 
     if (!text) {
       return res.status(200).json({
         ok: false,
         text:
-          "⚠️ OpenAI a bien été appelé avec ta clé, mais n'a pas renvoyé de texte.\n" +
-          "➡️ Dans ton tableau de bord OpenAI, ton project est sûrement vide ou le modèle 'gpt-4o-mini' n'est pas activé.\n" +
-          `Recette de secours pour ${sign} (${lang}) : jus de bouye + yassa veggie.`
+          "⚠️ OpenAI a répondu sans texte lisible.\n" +
+          `Recette de secours : jus de bouye + yassa veggie pour ${sign} (${lang}).`,
       });
     }
 
-    // 3) tout va bien 👉 on renvoie la vraie recette
+    // ✅ Réponse finale
     return res.status(200).json({
       ok: true,
-      text
+      text,
     });
   } catch (err) {
     return res.status(200).json({
       ok: false,
-      text: "❌ Erreur d'appel OpenAI : " + err.message
+      text: "❌ Erreur d'appel OpenAI : " + err.message,
     });
   }
 }
-
