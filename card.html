@@ -93,10 +93,10 @@
 </head>
 <body>
   <div class="page">
-     <main class="astrofood-gold">
-      <header class="hero">
+    <main class="astrofood-gold">
+      <header class="hero card">
         <!-- PHOTO RECETTE -->
-       <img class="photo" src="/recette.jpg" alt="Photo de la recette" />
+        <img class="photo" src="/recette.jpg" alt="Photo de la recette" />
 
         <!-- META -->
         <div class="meta">
@@ -104,7 +104,7 @@
             <div class="logo">AF</div>
             <div class="legend">ASTROFOOD PREMIUM GOLD • v16</div>
           </div>
-            <h1 class="title">Poulet Yassa Sénégalais</h1>
+          <h1 class="title">Poulet Yassa Sénégalais</h1>
           <div class="tags">
             <span class="tag" contenteditable="true">🌙 Signe conseillé : Lion</span>
             <span class="tag" contenteditable="true">🔥 Mode : Four</span>
@@ -117,11 +117,11 @@
             <div class="kpi" contenteditable="true">Difficulté : Facile</div>
             <div class="kpi" contenteditable="true">Calories : ~ 520 kcal/portion</div>
           </div>
-           <div class="actions">
+          <div class="actions">
             <a class="btn" href="#" onclick="window.print();return false;">🖨️ Imprimer en PDF</a>
             <a class="btn" href="#" onclick="exportJSON();return false;">💾 Exporter JSON</a>
-             <a class="btn" id="btn-ai-photo" href="#">🎨 Générer photo AI</a>
-              <span class="small">💡 Astuce : cliquez sur un texte pour modifier (mode éditable).</span> 
+            <a class="btn" id="btn-ai-photo" href="#">🎨 Générer photo AI</a>
+            <span class="small">💡 Astuce : cliquez sur un texte pour modifier (mode éditable).</span>
           </div>
         </div>
       </header>
@@ -142,24 +142,23 @@
 
         <div class="col">
           <h2>👨‍🍳 Mode de préparation</h2>
-           <ul id="steps">
-           <li>Mariner le poulet avec le jus de citron, la moutarde, l’ail et le piment rouge</li>
-          <li>Dorer le poulet à la poêle ou au four très chaud</li>
-          <li>Préparer la sauce avec les oignons émincés, faire fondre les oignons, ajouter la marinade, compoter doucement</li>
-          <li>Cuire poulet + oignons en cocotte ou au four à 190°C pendant 35–40 minutes</li>
-          <li>Cuire le riz dans l’eau salée avec un peu d’huile (absorption ou vapeur)</li>
-          <li>Préparer la sauce oignons avec moutarde et jus de cuisson, mijoter 10 min</li>
-          <li>Ajouter le riz et l’eau, porter à ébullition, puis réduire le feu et laisser mijoter</li>
-          <li>Servir le poulet nappé de sauce avec le riz blanc</li>
+          <ul id="steps">
+            <li>Mariner le poulet avec le jus de citron, la moutarde, l’ail et le piment rouge</li>
+            <li>Dorer le poulet à la poêle ou au four très chaud</li>
+            <li>Préparer la sauce avec les oignons émincés, faire fondre les oignons, ajouter la marinade, compoter doucement</li>
+            <li>Cuire poulet + oignons en cocotte ou au four à 190°C pendant 35–40 minutes</li>
+            <li>Cuire le riz dans l’eau salée avec un peu d’huile (absorption ou vapeur)</li>
+            <li>Préparer la sauce oignons avec moutarde et jus de cuisson, mijoter 10 min</li>
+            <li>Ajouter le riz et l’eau, porter à ébullition, puis réduire le feu et laisser mijoter</li>
+            <li>Servir le poulet nappé de sauce avec le riz blanc</li>
           </ul>
-          </div>
         </div>
 
         <div class="block">
           <h2>🔥 Mode & temps de cuisson</h2>
           <p class="note" contenteditable="true">
-            Four statique 190 °C · 35–40 min (ou cocotte feu moyen 30–35 min). 
-            Terminer 5 min en grill pour caraméliser légèrement les oignons.
+            Four statique 190 °C · 35–40 min (ou cocotte feu moyen 30–35 min).
+            Terminer 5 min en grill pour caraméliser légèrement les oignons.
           </p>
         </div>
 
@@ -178,7 +177,6 @@
       <div class="footer">
         <div class="qr-wrap">
           <div class="qr">
-            <!-- QR WhatsApp (modifie le numéro ci-dessous) -->
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=https://wa.me/221786599051" width="110" height="110" alt="QR WhatsApp">
           </div>
           <div>
@@ -188,45 +186,44 @@
         </div>
         <div class="small">© AstroFood — Carte digitale prête à imprimer</div>
       </div>
-    </div>
+    </main>
   </div>
 
+  <!-- ========= SCRIPTS ========= -->
+  <script>
+    // --- Lecture des paramètres d'URL (optionnel) ---
+    const params = new URLSearchParams(window.location.search);
+    const urlSign = params.get('sign');
+    const urlRecipe = params.get('recipe');
 
-    <!-- ========= SCRIPT MINIMAL : APPELLE /api/chef-image ET REMPLACE <img.photo> ========= -->
+    if (urlRecipe) {
+      const titleEl = document.querySelector('.title');
+      if (titleEl) titleEl.textContent = urlRecipe;
+    }
+    if (urlSign) {
+      const tagEl = document.querySelector('.tag');
+      if (tagEl) tagEl.textContent = `🌙 Signe conseillé : ${urlSign}`;
+    }
 
-    
-  // --- Lecture automatique des paramètres de l'URL ---
-<script>
-  const params = new URLSearchParams(window.location.search);
-  const sign = params.get('sign');
-  const recipe = params.get('recipe');
+    // --- Utilitaires d'export JSON (bouton) ---
+    function exportJSON(){
+      const data = _afPayload();
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = (data.title || 'recette') + '.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
 
-  // Exemple d’insertion dynamique dans la carte :
-  if (recipe) {
-    const titleEl = document.querySelector('.title');
-    if (titleEl) titleEl.textContent = recipe;
-  }
-
-  if (sign) {
-    const tagEl = document.querySelector('.tag');
-    if (tagEl) tagEl.textContent = `🌙 Signe conseillé : ${sign}`;
-  } 
     function _afPayload(){
       const title = document.querySelector('.title')?.innerText?.trim() || 'Recette';
-      // Accepte <li> dans #steps ou bien le 2e div d’un .step (compat)
-      const steps =
-        Array.from(document.querySelectorAll('#steps li')).map(li => li.innerText.trim());
-      if (steps.length === 0) {
-        document.querySelectorAll('#steps .step div:nth-child(2)').forEach(s => {
-          const t = s.innerText?.trim(); if (t) steps.push(t);
-        });
-      }
-      const ingredients = Array.from(document.querySelectorAll('#ingredients li'))
-        .map(li => li.innerText.trim());
-
+      const ingredients = Array.from(document.querySelectorAll('#ingredients li')).map(li => li.innerText.trim());
+      const steps = Array.from(document.querySelectorAll('#steps li')).map(li => li.innerText.trim());
       return { title, ingredients, steps };
     }
 
+    // --- Génération de photo IA (conserve ton flux existant) ---
     async function _afGenPhoto(){
       const btn = document.getElementById('btn-ai-photo');
       const img = document.querySelector('.photo');
@@ -244,8 +241,7 @@
         });
         const data = await r.json();
         if(!r.ok || !data?.image) throw new Error(data?.error || ('HTTP '+r.status));
-        // data.image = "data:image/png;base64,..." OU URL publique
-        img.src = data.image;
+        img.src = data.image; // base64 ou URL
         btn.textContent = '✅ Photo générée';
       }catch(e){
         console.error(e);
@@ -256,11 +252,55 @@
         setTimeout(()=> (btn.textContent = '🎨 Générer photo AI'), 2000);
       }
     }
-
     document.getElementById('btn-ai-photo')?.addEventListener('click', (ev)=>{
       ev.preventDefault();
       _afGenPhoto();
     });
+
+    // ========= 🔗 SYNC AVEC index.html (localStorage + storage event) =========
+    function applyRecipeToCard(recipe){
+      if(!recipe) return;
+
+      // Titre
+      const titleEl = document.querySelector('.title');
+      if (titleEl) titleEl.textContent = recipe.title || 'Recette';
+
+      // Signe (1er tag)
+      const firstTag = document.querySelector('.tags .tag');
+      if (firstTag) firstTag.textContent = `🌙 Signe conseillé : ${recipe.sign || '—'}`;
+
+      // Ingrédients
+      const ingUL = document.getElementById('ingredients');
+      if (ingUL && Array.isArray(recipe.ingredients)) {
+        ingUL.innerHTML = recipe.ingredients.map(i => `<li>${i}</li>`).join('');
+      }
+
+      // Étapes
+      const stepsUL = document.getElementById('steps');
+      if (stepsUL && Array.isArray(recipe.steps)) {
+        stepsUL.innerHTML = recipe.steps.map(s => `<li>${s}</li>`).join('');
+      }
+
+      // Image si fournie
+      const img = document.querySelector('.photo');
+      if (img && recipe.image) img.src = recipe.image;
+    }
+
+    // Hydratation initiale depuis le cache partagé
+    try {
+      const cached = localStorage.getItem('astro:lastRecipe');
+      if (cached) applyRecipeToCard(JSON.parse(cached));
+    } catch(e){ console.warn('Pas de recette en cache', e); }
+
+    // Mise à jour live quand index.html écrit dans localStorage
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'astro:lastRecipe' && e.newValue) {
+        try { applyRecipeToCard(JSON.parse(e.newValue)); } catch(_){}
+      }
+    });
+
+    // (Compat) si la génération et la carte sont sur la même page un jour
+    window.addEventListener('astro:recipe-updated', (e) => applyRecipeToCard(e.detail));
   </script>
 </body>
 </html>
