@@ -136,6 +136,52 @@
 
   <script>
     // Multilang toggle
+     function setLang(lang){
+      document.querySelectorAll('[data-i18n-fr]').forEach(el=>{
+        const fr = el.getAttribute('data-i18n-fr');
+        const en = el.getAttribute('data-i18n-en');
+        const ar = el.getAttribute('data-i18n-ar');
+        if(lang==='fr') el.textContent = fr;
+        if(lang==='en') el.textContent = en;
+        if(lang==='ar') el.textContent = ar;
+      });
+      if(lang==='ar'){
+        document.documentElement.lang='ar';
+        document.body.dir='rtl';
+        document.body.style.fontFamily="'Cairo',sans-serif";
+      }else{
+        document.documentElement.lang = lang==='en'?'en':'fr';
+        document.body.dir='ltr';
+        document.body.style.fontFamily="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
+      }
+    }
+    document.querySelectorAll('.lang-btn').forEach(b=>{
+      b.addEventListener('click',()=>{
+        document.querySelectorAll('.lang-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        setLang(b.dataset.lang);
+      });
+    });
+
+    // API hook
+    const API_URL = "/api/astrofood-ai";
+    const out = document.getElementById("ai-output");
+    document.getElementById("btn-recipe").addEventListener("click", async ()=>{
+      const sign = document.getElementById("sign").value;
+      const lang = document.getElementById("lang").value;
+      out.textContent = "🍳 Génération…";
+      try{
+        const r = await fetch(API_URL, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ sign, lang, mode:"recipe" })
+        });
+        const data = await r.json();
+        out.textContent = data.text || "⚠️ Pas de texte reçu.";
+      }catch(e){
+        out.textContent = "❌ Erreur front : "+e.message;
+      }
+    
 (function () {
   // Helpers
   const $ = (id) => document.getElementById(id);
