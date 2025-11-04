@@ -68,52 +68,56 @@
         <div class="muted" style="margin-bottom:.3rem" data-i18n-fr="WhatsApp direct" data-i18n-en="Direct WhatsApp" data-i18n-ar="واتساب مباشر">WhatsApp direct</div>
         <div class="qr">
           <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://wa.me/221786599051" width="140" height="140" alt="QR WhatsApp" />
-    
+        </div>
         </div>
         <div style="font-size:.8rem;color:var(--gold);letter-spacing:.05em">+221 78 659 90 51</div>
       </div>
+     </div>
     </section>
 
     <!-- AI SECTION -->
     <section id="ai" class="card">
       <h2 style="color:var(--gold)" data-i18n-fr="Assistant Chef-AI" data-i18n-en="Chef-AI Assistant" data-i18n-ar="مساعد الشيف-AI">Assistant Chef-AI</h2>
       <div class="grid2">
-       <div>
-         <label>Plan de repas</label>
-          <select id="plan">
-            <option value="single">Recette unique</option>
-            <option value="daily3" selected>3 repas / jour</option>
-          </select>
-        </div>
-      <div>
-        <label data-i18n-fr="Votre signe" data-i18n-en="Your sign" data-i18n-ar="برجك"></label> 
-         <select id="sign">
-            <option>Bélier</option><option>Taureau</option><option>Gémeaux</option>
-            <option>Cancer</option><option>Lion</option><option>Vierge</option>
-            <option>Balance</option><option>Scorpion</option><option>Sagittaire</option>
-            <option>Capricorne</option><option>Verseau</option><option>Poissons</option>
-          </select>
-       </div>
-     <div>  
-         <label data-i18n-fr="Langue" data-i18n-en="Language" data-i18n-ar="اللغة"></label>
-          <select id="lang">
-          <option value="fr">Français</option>
-          <option value="en">English</option>
-           <option value="ar">العربية</option>
-         </select>
-      </div>
-   <div>
-     <label>Objectif / État</label>
-      <select id="state">
+  <div>
+    <label>Votre signe</label>
+    <select id="sign">
+      <option>Bélier</option><option>Taureau</option><option>Gémeaux</option>
+      <option>Cancer</option><option>Lion</option><option>Vierge</option>
+      <option>Balance</option><option>Scorpion</option><option>Sagittaire</option>
+      <option>Capricorne</option><option>Verseau</option><option>Poissons</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Langue</label>
+    <select id="lang">
+      <option value="fr">Français</option>
+      <option value="en">English</option>
+      <option value="ar">العربية</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Objectif / État</label>
+    <select id="state">
       <option value="detox">Détox</option>
       <option value="energy_boost">Booster énergie</option>
       <option value="stress_relief">Anti-stress</option>
       <option value="immunity">Immunité</option>
       <option value="digestion">Digestion</option>
       <option value="metabolic_balance">Balance métabolique</option>
-      </select>
-   </div>  
+    </select>
+  </div>
+
   <div>
+    <label>Plan de repas</label>
+    <select id="plan">
+      <option value="single">Recette unique</option>
+      <option value="daily3">3 repas / jour</option>
+    </select>
+  </div>
+</div>
       <button class="btn" id="btn-recipe" style="margin-top:.7rem">🍳 <span data-i18n-fr="Générer" data-i18n-en="Generate" data-i18n-ar="إنشاء">Générer</span></button>
       <div id="ai-output" class="ai-out">Prêt.</div>
       <div style="margin-top:.6rem">
