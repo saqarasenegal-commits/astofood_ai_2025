@@ -106,10 +106,11 @@
           </div>
           <h1 class="title">Poulet Yassa Sénégalais</h1>
           <div class="tags">
-            <span class="tag" contenteditable="true">🌙 Signe conseillé : Lion</span>
-            <span class="tag" contenteditable="true">🔥 Mode : Four</span>
-            <span class="tag" contenteditable="true">⏱️ Total : 55 min</span>
-            <span class="tag" contenteditable="true">🍽️ 4 portions</span>
+             <span class="tag" id="tag-sign">🌙 Signe conseillé : —</span>
+             <span class="tag" id="tag-goal">🎯 Objectif : —</span>
+             <span class="tag" id="tag-element">♨️ Élément : —</span>
+             <span class="tag" contenteditable="true">⏱️ Total : 55 min</span>
+             <span class="tag" contenteditable="true">🍽️ 4 portions</span>
           </div>
           <div class="kpis">
             <div class="kpi" contenteditable="true">Préparation : 15 min</div>
@@ -266,8 +267,16 @@
       if (titleEl) titleEl.textContent = recipe.title || 'Recette';
 
       // Signe (1er tag)
-      const firstTag = document.querySelector('.tags .tag');
-      if (firstTag) firstTag.textContent = `🌙 Signe conseillé : ${recipe.sign || '—'}`;
+    // Tags : signe / objectif / élément
+const tagSign = document.getElementById('tag-sign');
+if (tagSign) tagSign.textContent = `🌙 Signe conseillé : ${recipe.sign || '—'}`;
+
+const goalMap = { detox:"Détox", energy_boost:"Booster énergie", stress_relief:"Anti-stress", immunity:"Immunité", digestion:"Digestion" };
+const tagGoal = document.getElementById('tag-goal');
+if (tagGoal) tagGoal.textContent = `🎯 Objectif : ${goalMap[recipe.goal] || recipe.goal || '—'}`;
+
+const tagElement = document.getElementById('tag-element');
+if (tagElement) tagElement.textContent = `♨️ Élément : ${recipe.element || '—'}`;
 
       // Ingrédients
       const ingUL = document.getElementById('ingredients');
