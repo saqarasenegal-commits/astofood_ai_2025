@@ -77,6 +77,14 @@
     <section id="ai" class="card">
       <h2 style="color:var(--gold)" data-i18n-fr="Assistant Chef-AI" data-i18n-en="Chef-AI Assistant" data-i18n-ar="مساعد الشيف-AI">Assistant Chef-AI</h2>
       <div class="grid2">
+       <div>
+         <label>Plan de repas</label>
+          <select id="plan">
+            <option value="single">Recette unique</option>
+            <option value="daily3" selected>3 repas / jour</option>
+          </select>
+        </div>
+
         <div>
         <label data-i18n-fr="Votre signe" data-i18n-en="Your sign" data-i18n-ar="برجك"></label> 
         <select id="sign">
@@ -192,8 +200,8 @@
       const sign = document.getElementById("sign").value;
       const lang = document.getElementById("lang").value;
       const state = document.getElementById("state")?.value || "detox";
-
-       const element = elementFromSign(sign); 
+      const element = elementFromSign(sign); 
+      const plan = document.getElementById("plan")?.value || "daily3"; 
       
       out.textContent = "🍳 Génération…";
       try{
@@ -213,8 +221,10 @@
         // ----- 🔗 PATCH de synchronisation (carte digitale)
         const recipe = {
           sign, lang,
-           goal: state,           // 👈 on stocke l’objectif
-           element,  
+          mode: plan === "daily3" ? "daily_menu" : "recipe", 
+          goal: state,           // 👈 on stocke l’objectif
+           element, 
+           meals: ["breakfast","lunch","dinner"]  
           title: data.title || data.recipe?.title || "Recette",
           description: data.description || data.recipe?.description || (data.text ?? ""),
           ingredients: data.ingredients || data.recipe?.ingredients || [],
