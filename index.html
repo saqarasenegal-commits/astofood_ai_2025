@@ -98,9 +98,9 @@
       <button class="btn" id="btn-recipe" style="margin-top:.7rem">🍳 <span data-i18n-fr="Générer" data-i18n-en="Generate" data-i18n-ar="إنشاء">Générer</span></button>
       <div id="ai-output" class="ai-out">Prêt.</div>
       <div style="margin-top:.6rem">
-   <a class="btn" id="open-digital-card" href="/card.html" target="_blank" rel="noopener">
-  📇 Afficher la carte digitale
-</a>
+        <a class="btn" id="open-digital-card" href="/card.html" target="_blank" rel="noopener">
+        📇 Afficher la carte digitale
+      </a>
 
 
       </div>
@@ -191,6 +191,28 @@
       const url = `/card.html?sign=${encodeURIComponent(sign)}&recipe=${encodeURIComponent(recipe)}`;
       window.open(url, '_blank');
     });
+    
+  (function(){
+    function openCard(e){
+      e.preventDefault();
+      var url = '/carte.html'; // si Next.js avec /public, c’est pareil
+      try { window.open(url, '_blank', 'noopener'); }
+      catch(_) { location.href = url; }
+    }
+    function init(){
+      var btn = document.getElementById('open-digital-card');
+      if(btn){
+        btn.removeEventListener('click', openCard);
+        btn.addEventListener('click', openCard); // attaché uniquement à CE bouton
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  
   </script>
 </body>
 </html>
