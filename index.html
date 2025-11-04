@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AstroFood Premium Gold – Chef‑AI</title>
+  <title>AstroFood Premium Gold – Chef-AI</title>
   <meta name="description" content="AstroFood Premium Gold: recettes IA par signe (FR/EN/AR), packs payants, QR WhatsApp." />
   <meta name="theme-color" content="#0f172a" />
   <link rel="manifest" href="/manifest.json">
@@ -60,7 +60,7 @@
         <h1 data-i18n-fr="Cuisine guidée par les astres" data-i18n-en="Cooking guided by the stars" data-i18n-ar="مطبخك وفق حركة الكواكب">Cuisine guidée par les astres</h1>
         <p class="muted" data-i18n-fr="Choisis ton signe et ta langue : l’IA propose 3 repas + boissons + carte téléchargeable." data-i18n-en="Choose your sign & language: AI suggests 3 meals + drinks + a downloadable card." data-i18n-ar="اختر برجك ولغتك: الذكاء الاصطناعي يقترح 3 وجبات + مشروبات + بطاقة قابلة للتنزيل.">Choisis ton signe et ta langue : l’IA propose 3 repas + boissons + carte téléchargeable.</p>
         <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem">
-          <a class="btn" href="#ai">🚀 <span data-i18n-fr="Lancer Chef‑AI" data-i18n-en="Start Chef‑AI" data-i18n-ar="تشغيل الشيف‑AI">Lancer Chef‑AI</span></a>
+          <a class="btn" href="#ai">🚀 <span data-i18n-fr="Lancer Chef-AI" data-i18n-en="Start Chef-AI" data-i18n-ar="تشغيل الشيف-AI">Lancer Chef-AI</span></a>
           <a class="btn outline" href="#pricing">💳 <span data-i18n-fr="Packs & achats" data-i18n-en="Packs & purchase" data-i18n-ar="الباقات والشراء">Packs & achats</span></a>
         </div>
       </div>
@@ -75,7 +75,7 @@
 
     <!-- AI SECTION -->
     <section id="ai" class="card">
-      <h2 style="color:var(--gold)" data-i18n-fr="Assistant Chef‑AI" data-i18n-en="Chef‑AI Assistant" data-i18n-ar="مساعد الشيف‑AI">Assistant Chef‑AI</h2>
+      <h2 style="color:var(--gold)" data-i18n-fr="Assistant Chef-AI" data-i18n-en="Chef-AI Assistant" data-i18n-ar="مساعد الشيف-AI">Assistant Chef-AI</h2>
       <div class="grid2">
         <div>
           <label data-i18n-fr="Votre signe" data-i18n-en="Your sign" data-i18n-ar="برجك"></label>
@@ -99,10 +99,8 @@
       <div id="ai-output" class="ai-out">Prêt.</div>
       <div style="margin-top:.6rem">
         <a class="btn" id="open-digital-card" href="/card.html" target="_blank" rel="noopener">
-        📇 Afficher la carte digitale
-      </a>
-
-
+          📇 Afficher la carte digitale
+        </a>
       </div>
     </section>
 
@@ -136,7 +134,7 @@
 
   <script>
     // Multilang toggle
-     function setLang(lang){
+    function setLang(lang){
       document.querySelectorAll('[data-i18n-fr]').forEach(el=>{
         const fr = el.getAttribute('data-i18n-fr');
         const en = el.getAttribute('data-i18n-en');
@@ -163,10 +161,12 @@
       });
     });
 
-    // API hook
-
-  const API_URL = "/api/astrofood-ai";
+    // =========================
+    // API hook + SYNC PATCH
+    // =========================
+    const API_URL = "/api/astrofood-ai";
     const out = document.getElementById("ai-output");
+
     document.getElementById("btn-recipe").addEventListener("click", async ()=>{
       const sign = document.getElementById("sign").value;
       const lang = document.getElementById("lang").value;
@@ -178,7 +178,27 @@
           body: JSON.stringify({ sign, lang, mode:"recipe" })
         });
         const data = await r.json();
+
+        // ----- Affichage texte (ton comportement actuel)
         out.textContent = data.text || "⚠️ Pas de texte reçu.";
+
+        // ----- 🔗 PATCH de synchronisation (carte digitale)
+        const recipe = {
+          sign, lang,
+          title: data.title || data.recipe?.title || "Recette",
+          description: data.description || data.recipe?.description || (data.text ?? ""),
+          ingredients: data.ingredients || data.recipe?.ingredients || [],
+          steps: data.steps || data.recipe?.steps || [],
+          image: data.image || data.recipe?.image || ""
+        };
+        try {
+          localStorage.setItem("astro:lastRecipe", JSON.stringify(recipe));
+        } catch(e) {
+          console.warn("localStorage indisponible", e);
+        }
+        // Evènement pour une carte sur la même page (si jamais)
+        window.dispatchEvent(new CustomEvent("astro:recipe-updated", { detail: recipe }));
+
       }catch(e){
         out.textContent = "❌ Erreur front : "+e.message;
       }
