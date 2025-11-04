@@ -136,83 +136,105 @@
 
   <script>
     // Multilang toggle
-    function setLang(lang){
-      document.querySelectorAll('[data-i18n-fr]').forEach(el=>{
-        const fr = el.getAttribute('data-i18n-fr');
-        const en = el.getAttribute('data-i18n-en');
-        const ar = el.getAttribute('data-i18n-ar');
-        if(lang==='fr') el.textContent = fr;
-        if(lang==='en') el.textContent = en;
-        if(lang==='ar') el.textContent = ar;
+(function () {
+  // Helpers
+  const $ = (id) => document.getElementById(id);
+  const API_URL = "/api/astrofood-ai";
+
+  // Vérifie la présence des éléments (évite les erreurs silencieuses)
+  function assertEl(el, name){
+    if (!el) console.warn(`[AstroFood] Élément manquant: #${name}`);
+    return !!el;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const btn = $("btn-recipe");         // <button id="btn-recipe">
+    const signSel = $("sign");           // <select id="sign">
+    const langSel = $("lang");           // <select id="lang">
+    const out = $("ai-output");          // <div id="ai-output">
+    const openCard = $("open-digital-card"); // <a id="open-digital-card">
+
+    // Sécurise le bouton pour qu'il ne fasse JAMAIS un submit de formulaire
+    if (btn) btn.setAttribute("type", "button");
+
+    // Branchement "Générer"
+    if (assertEl(btn, "btn-recipe")) {
+      btn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const sign = signSel?.value || "Lion";
+        const lang = langSel?.value || "fr";
+
+        if (out) out.textContent = "🍳 Génération…";
+        btn.disabled = true;
+
+        try {
+          const r = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sign, lang, mode: "recipe" })
+          });
+
+          // Gestion des réponses
+          let data;
+          try { data = await r.json(); }
+          catch { data = { text: await r.text() }; }
+
+          if (!r.ok) throw new Error(data?.error || `HTTP ${r.status}`);
+
+          // Affiche le texte (adapte ici la clé renvoyée par ton API)
+          if (out) out.textContent = data.text || data.result || "✅ OK";
+
+          // Mémo (facultatif) pour la carte digitale
+          localStorage.setItem("astrofood:last", JSON.stringify({
+            sign, lang,
+            title: data.title || "Recette",
+            ingredients: data.ingredients || [],
+            steps: data.steps || []
+          }));
+        } catch (err) {
+          console.error(err);
+          if (out) out.textContent = "❌ " + err.message;
+        } finally {
+          btn.disabled = false;
+        }
       });
-      if(lang==='ar'){
-        document.documentElement.lang='ar';
-        document.body.dir='rtl';
-        document.body.style.fontFamily="'Cairo',sans-serif";
-      }else{
-        document.documentElement.lang = lang==='en'?'en':'fr';
-        document.body.dir='ltr';
-        document.body.style.fontFamily="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
-      }
     }
-    document.querySelectorAll('.lang-btn').forEach(b=>{
-      b.addEventListener('click',()=>{
-        document.querySelectorAll('.lang-btn').forEach(x=>x.classList.remove('active'));
-        b.classList.add('active');
-        setLang(b.dataset.lang);
-      });
+
+    // Réagit au changement de langue / signe (facultatif : save état)
+    if (langSel) langSel.addEventListener("change", () => {
+      localStorage.setItem("astrofood:lang", langSel.value);
+    });
+    if (signSel) signSel.addEventListener("change", () => {
+      localStorage.setItem("astrofood:sign", signSel.value);
     });
 
-    // API hook
-    const API_URL = "/api/astrofood-ai";
-    const out = document.getElementById("ai-output");
-    document.getElementById("btn-recipe").addEventListener("click", async ()=>{
-      const sign = document.getElementById("sign").value;
-      const lang = document.getElementById("lang").value;
-      out.textContent = "🍳 Génération…";
-      try{
-        const r = await fetch(API_URL, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({ sign, lang, mode:"recipe" })
-        });
-        const data = await r.json();
-        out.textContent = data.text || "⚠️ Pas de texte reçu.";
-      }catch(e){
-        out.textContent = "❌ Erreur front : "+e.message;
-      }  
-      
-    document.getElementById('open-digital-card').addEventListener('click', () => {
-      // Exemple : récupérer les données déjà présentes dans la page principale
-      const sign = document.getElementById('sign')?.value || 'Lion';
-      const recipe = document.getElementById('recipe-name')?.innerText || 'Poulet Yassa Sénégalais';
+    // Au chargement, restaure les valeurs mémorisées (si tu veux)
+    const savedLang = localStorage.getItem("astrofood:lang");
+    if (langSel && savedLang) langSel.value = savedLang;
 
-      // Construire une URL avec les paramètres
-      const url = `/card.html?sign=${encodeURIComponent(sign)}&recipe=${encodeURIComponent(recipe)}`;
-      window.open(url, '_blank');
-    });
-    
-  (function(){
-    function openCard(e){
-      e.preventDefault();
-      var url = '/carte.html'; // si Next.js avec /public, c’est pareil
-      try { window.open(url, '_blank', 'noopener'); }
-      catch(_) { location.href = url; }
+    const savedSign = localStorage.getItem("astrofood:sign");
+    if (signSel && savedSign) signSel.value = savedSign;
+
+    // Bouton "Afficher la carte digitale"
+    if (openCard) {
+      openCard.addEventListener("click", (e) => {
+        e.preventDefault();
+        const sign = signSel?.value || "Lion";
+        // Titre dans la page, sinon prend le dernier généré
+        const last = JSON.parse(localStorage.getItem("astrofood:last") || "{}");
+        const recipe =
+          document.getElementById("recipe-name")?.innerText ||
+          last.title || "Recette";
+
+        const url = `/carte.html?sign=${encodeURIComponent(sign)}&recipe=${encodeURIComponent(recipe)}`;
+        window.open(url, "_blank");
+      });
     }
-    function init(){
-      var btn = document.getElementById('open-digital-card');
-      if(btn){
-        btn.removeEventListener('click', openCard);
-        btn.addEventListener('click', openCard); // attaché uniquement à CE bouton
-      }
-    }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
-    }
-  })();
-  
-  </script>
+  });
+})();
+</script>
+
 </body>
 </html>
