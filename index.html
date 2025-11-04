@@ -84,44 +84,44 @@
             <option value="daily3" selected>3 repas / jour</option>
           </select>
         </div>
-        <div>
+      <div>
         <label data-i18n-fr="Votre signe" data-i18n-en="Your sign" data-i18n-ar="برجك"></label> 
-        <select id="sign">
+         <select id="sign">
             <option>Bélier</option><option>Taureau</option><option>Gémeaux</option>
             <option>Cancer</option><option>Lion</option><option>Vierge</option>
             <option>Balance</option><option>Scorpion</option><option>Sagittaire</option>
             <option>Capricorne</option><option>Verseau</option><option>Poissons</option>
           </select>
-        </div>
-       <div>  
-  <label data-i18n-fr="Langue" data-i18n-en="Language" data-i18n-ar="اللغة"></label>
-  <select id="lang">
-    <option value="fr">Français</option>
-    <option value="en">English</option>
-    <option value="ar">العربية</option>
-  </select>
-</div>
-<div>
-  <label>Objectif / État</label>
-  <select id="state">
-    <option value="detox">Détox</option>
-    <option value="energy_boost">Booster énergie</option>
-    <option value="stress_relief">Anti-stress</option>
-    <option value="immunity">Immunité</option>
-    <option value="digestion">Digestion</option>
-    <option value="metabolic_balance">Balance métabolique</option>
-   </select>
-    </div>  
-   </div>
+       </div>
+     <div>  
+         <label data-i18n-fr="Langue" data-i18n-en="Language" data-i18n-ar="اللغة"></label>
+          <select id="lang">
+          <option value="fr">Français</option>
+          <option value="en">English</option>
+           <option value="ar">العربية</option>
+         </select>
+      </div>
+   <div>
+     <label>Objectif / État</label>
+      <select id="state">
+      <option value="detox">Détox</option>
+      <option value="energy_boost">Booster énergie</option>
+      <option value="stress_relief">Anti-stress</option>
+      <option value="immunity">Immunité</option>
+      <option value="digestion">Digestion</option>
+      <option value="metabolic_balance">Balance métabolique</option>
+      </select>
+   </div>  
+  <div>
       <button class="btn" id="btn-recipe" style="margin-top:.7rem">🍳 <span data-i18n-fr="Générer" data-i18n-en="Generate" data-i18n-ar="إنشاء">Générer</span></button>
       <div id="ai-output" class="ai-out">Prêt.</div>
       <div style="margin-top:.6rem">
         <a class="btn" id="open-digital-card" href="/card.html" target="_blank" rel="noopener">
           📇 Afficher la carte digitale
         </a>
-      </div>
-    </section>
-
+    </div>
+    
+  </section>
     <!-- PRICING -->
     <section id="pricing" class="card">
       <h2 style="color:#fff" data-i18n-fr="Packs Premium" data-i18n-en="Premium Packs" data-i18n-ar="الباقات المميزة">Packs Premium</h2>
@@ -220,7 +220,7 @@
           sign, lang,
           mode: plan === "daily3" ? "daily_menu" : "recipe", 
           goal: state,           // 👈 on stocke l’objectif
-           element, 
+          element, 
            meals: ["breakfast","lunch","dinner"]  
              
           title: data.title || data.recipe?.title || "Recette",
