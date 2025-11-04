@@ -1,118 +1,183 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AstroFood – Chef-AI Intelligent 🧠🍽️</title>
-    <style>
-      :root {
-        --gold: #fbbf24;
-        --bg: radial-gradient(circle at top, #0f172a, #020617 65%);
-      }
-      body {
-        margin: 0;
-        background: var(--bg);
-        color: #fff;
-        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-        min-height: 100vh;
-      }
-      header {
-        padding: 1rem 1.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid rgba(251, 191, 36, 0.25);
-      }
-      main {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        padding: 1.5rem;
-      }
-      .card {
-        background: rgba(2, 6, 23, 0.55);
-        border: 1px solid rgba(251, 191, 36, 0.12);
-        border-radius: 1rem;
-        padding: 1rem;
-      }
-      textarea, select, button {
-        width: 100%;
-        border-radius: 0.6rem;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        background: rgba(15, 23, 42, 0.6);
-        color: #fff;
-        padding: 0.6rem 0.7rem;
-        margin-bottom: 0.5rem;
-      }
-      button {
-        background: linear-gradient(120deg, #fbbf24, #f59e0b);
-        color: #020617;
-        font-weight: 600;
-        cursor: pointer;
-      }
-      #ai-output { white-space: pre-wrap; }
-      @media (max-width: 960px) {
-        main { grid-template-columns: 1fr; }
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>AstroFood – Chef-AI Intelligent</h1>
-      <p style="opacity:0.7;font-size:0.8rem">Connecté au backend</p>
-    </header>
-    <main>
-      <div class="card">
-        <h2>🗣️ Chat AstroFood</h2>
-        <textarea id="chat-input" rows="4" placeholder="Ex : Donne-moi un menu pour un Lion…"></textarea>
-        <button id="btn-chat">Envoyer</button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AstroFood Premium Gold – Chef‑AI</title>
+  <meta name="description" content="AstroFood Premium Gold: recettes IA par signe (FR/EN/AR), packs payants, QR WhatsApp." />
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/icon-192.png" sizes="192x192">
+  <style>
+    :root { --gold:#FBBF24; --amber:#f59e0b; --bg: radial-gradient(circle at top, #0f172a, #020617 65%); }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+    header{padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(251,191,36,.22);background:rgba(2,6,23,.35);position:sticky;top:0;backdrop-filter:blur(10px)}
+    .brand{display:flex;gap:.7rem;align-items:center}
+    .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(120deg,var(--gold),var(--amber));box-shadow:0 0 0 3px rgba(251,191,36,.12);display:grid;place-items:center;font-weight:800;color:#111}
+    .title{font-weight:800;letter-spacing:.2px}
+    .langs{display:flex;gap:.4rem}
+    .lang-btn{background:transparent;border:1px solid rgba(251,191,36,.25);color:#fff;cursor:pointer;padding:.35rem .7rem;border-radius:.55rem;font-size:.85rem}
+    .lang-btn.active{background:rgba(251,191,36,.12);color:var(--gold)}
+    main{width:min(1100px,100%);margin:1.25rem auto 3rem;padding:0 1rem;display:grid;gap:1rem}
+    .hero{display:grid;gap:1rem;grid-template-columns:1.1fr .9fr;align-items:center}
+    .hero h1{font-size:clamp(1.7rem,3.1vw,2.5rem);margin:.2rem 0}
+    .muted{color:rgba(255,255,255,.65)}
+    .btn{background:linear-gradient(120deg,var(--gold),var(--amber));border:none;color:#111827;padding:.6rem 1rem;border-radius:.65rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
+    .btn.outline{background:transparent;border:1px solid rgba(251,191,36,.35);color:#fff}
+    .card{background:rgba(2,6,23,.5);border:1px solid rgba(251,191,36,.2);border-radius:16px;padding:1rem}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .price{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-radius:14px;padding:1rem;text-align:center}
+    .price h3{margin:.4rem 0;color:var(--gold)}
+    .price .amount{font-size:1.6rem;font-weight:800;color:#fff}
+    .ai-out{white-space:pre-wrap;min-height:120px;border:1px dashed rgba(251,191,36,.25);border-radius:12px;padding:.8rem;margin-top:.6rem}
+    .qr{background:rgba(255,255,255,.9);border-radius:.8rem;display:grid;place-items:center;width:140px;height:140px;margin:.4rem auto}
+    footer{opacity:.7;text-align:center;padding:1rem;font-size:.85rem}
+    @media (max-width:960px){.hero{grid-template-columns:1fr}.grid2,.grid3{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">AF</div>
+      <div>
+        <div class="title" data-i18n-fr="AstroFood Premium Gold" data-i18n-en="AstroFood Premium Gold" data-i18n-ar="أستروفود بريميوم جولد">AstroFood Premium Gold</div>
+        <div class="muted" data-i18n-fr="Recettes IA par signe" data-i18n-en="AI recipes by zodiac" data-i18n-ar="وصفات بالذكاء الاصطناعي حسب الأبراج">Recettes IA par signe</div>
       </div>
-      <div class="card">
-        <h2>🪐 Recette par signe</h2>
-        <select id="sign">
-          <option>Bélier</option><option>Taureau</option><option>Gémeaux</option>
-          <option>Cancer</option><option>Lion</option><option>Vierge</option>
-          <option>Balance</option><option>Scorpion</option><option>Sagittaire</option>
-          <option>Capricorne</option><option>Verseau</option><option>Poissons</option>
-        </select>
-        <select id="lang">
-          <option value="fr">Français</option>
-          <option value="en">English</option>
-          <option value="ar">العربية</option>
-        </select>
-        <button id="btn-recipe">Générer</button>
-      </div>
-      <div class="card" style="grid-column:1/-1">
-        <h2>📄 Réponse AI</h2>
-        <div id="ai-output">Lance un test 👆</div>
-      </div>
-    </main>
+    </div>
+    <div class="langs">
+      <button class="lang-btn active" data-lang="fr">FR</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="ar">العربية</button>
+    </div>
+  </header>
 
-    <!-- ✅ SCRIPT ACTIF -->
-<script>
-  const API_URL = "/api/astrofood-ai";
-  const out = document.getElementById("ai-output");
-  const btn = document.getElementById("btn-recipe");
-  const signSel = document.getElementById("sign");
-  const langSel = document.getElementById("lang");
+  <main>
+    <!-- HERO -->
+    <section class="hero card">
+      <div>
+        <h1 data-i18n-fr="Cuisine guidée par les astres" data-i18n-en="Cooking guided by the stars" data-i18n-ar="مطبخك وفق حركة الكواكب">Cuisine guidée par les astres</h1>
+        <p class="muted" data-i18n-fr="Choisis ton signe et ta langue : l’IA propose 3 repas + boissons + carte téléchargeable." data-i18n-en="Choose your sign & language: AI suggests 3 meals + drinks + a downloadable card." data-i18n-ar="اختر برجك ولغتك: الذكاء الاصطناعي يقترح 3 وجبات + مشروبات + بطاقة قابلة للتنزيل.">Choisis ton signe et ta langue : l’IA propose 3 repas + boissons + carte téléchargeable.</p>
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem">
+          <a class="btn" href="#ai">🚀 <span data-i18n-fr="Lancer Chef‑AI" data-i18n-en="Start Chef‑AI" data-i18n-ar="تشغيل الشيف‑AI">Lancer Chef‑AI</span></a>
+          <a class="btn outline" href="#pricing">💳 <span data-i18n-fr="Packs & achats" data-i18n-en="Packs & purchase" data-i18n-ar="الباقات والشراء">Packs & achats</span></a>
+        </div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="muted" style="margin-bottom:.3rem" data-i18n-fr="WhatsApp direct" data-i18n-en="Direct WhatsApp" data-i18n-ar="واتساب مباشر">WhatsApp direct</div>
+        <div class="qr">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://wa.me/221786599051" width="140" height="140" alt="QR WhatsApp" />
+        </div>
+        <div style="font-size:.8rem;color:var(--gold);letter-spacing:.05em">+221 78 659 90 51</div>
+      </div>
+    </section>
 
-  btn.addEventListener("click", async () => {
-    const sign = signSel.value;
-    const lang = langSel.value;
-    out.textContent = "🍳 Génération de la recette...";
-    try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sign, lang })
+    <!-- AI SECTION -->
+    <section id="ai" class="card">
+      <h2 style="color:var(--gold)" data-i18n-fr="Assistant Chef‑AI" data-i18n-en="Chef‑AI Assistant" data-i18n-ar="مساعد الشيف‑AI">Assistant Chef‑AI</h2>
+      <div class="grid2">
+        <div>
+          <label data-i18n-fr="Votre signe" data-i18n-en="Your sign" data-i18n-ar="برجك"></label>
+          <select id="sign">
+            <option>Bélier</option><option>Taureau</option><option>Gémeaux</option>
+            <option>Cancer</option><option>Lion</option><option>Vierge</option>
+            <option>Balance</option><option>Scorpion</option><option>Sagittaire</option>
+            <option>Capricorne</option><option>Verseau</option><option>Poissons</option>
+          </select>
+        </div>
+        <div>
+          <label data-i18n-fr="Langue" data-i18n-en="Language" data-i18n-ar="اللغة"></label>
+          <select id="lang">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" id="btn-recipe" style="margin-top:.7rem">🍳 <span data-i18n-fr="Générer" data-i18n-en="Generate" data-i18n-ar="إنشاء">Générer</span></button>
+      <div id="ai-output" class="ai-out">Prêt.</div>
+      <div style="margin-top:.6rem">
+        <a class="btn outline" id="btn-card" href="/cards/digital-card.html" target="_blank" rel="noopener">🖼️ Exemple de carte digitale</a>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" class="card">
+      <h2 style="color:#fff" data-i18n-fr="Packs Premium" data-i18n-en="Premium Packs" data-i18n-ar="الباقات المميزة">Packs Premium</h2>
+      <div class="grid3">
+        <div class="price">
+          <h3>Starter</h3>
+          <div class="amount">5,99 €</div>
+          <p class="muted">12 cartes digitales (1 par signe) – FR</p>
+          <a class="btn" href="https://astrofoody.lemonsqueezy.com" target="_blank" rel="noopener">Acheter</a>
+        </div>
+        <div class="price" style="border:2px solid var(--gold)">
+          <h3>Premium Gold</h3>
+          <div class="amount">14,99 €</div>
+          <p class="muted">36 cartes (FR/EN/AR) + recettes IA illimitées</p>
+          <a class="btn" href="https://astrofoody.lemonsqueezy.com" target="_blank" rel="noopener">Acheter</a>
+        </div>
+        <div class="price">
+          <h3>Business</h3>
+          <div class="amount">49,00 €</div>
+          <p class="muted">Licence boutique + modèles marketing</p>
+          <a class="btn" href="https://astrofoody.lemonsqueezy.com" target="_blank" rel="noopener">Acheter</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>© AstroFood Premium Gold • PWA • Vercel Ready</footer>
+
+  <script>
+    // Multilang toggle
+    function setLang(lang){
+      document.querySelectorAll('[data-i18n-fr]').forEach(el=>{
+        const fr = el.getAttribute('data-i18n-fr');
+        const en = el.getAttribute('data-i18n-en');
+        const ar = el.getAttribute('data-i18n-ar');
+        if(lang==='fr') el.textContent = fr;
+        if(lang==='en') el.textContent = en;
+        if(lang==='ar') el.textContent = ar;
       });
-      const data = await res.json();
-      out.textContent = data.text || "⚠️ Pas de texte reçu.";
-    } catch (e) {
-      out.textContent = "❌ Erreur côté navigateur : " + e.message;
+      if(lang==='ar'){
+        document.documentElement.lang='ar';
+        document.body.dir='rtl';
+        document.body.style.fontFamily="'Cairo',sans-serif";
+      }else{
+        document.documentElement.lang = lang==='en'?'en':'fr';
+        document.body.dir='ltr';
+        document.body.style.fontFamily="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
+      }
     }
-  });
-</script>
+    document.querySelectorAll('.lang-btn').forEach(b=>{
+      b.addEventListener('click',()=>{
+        document.querySelectorAll('.lang-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        setLang(b.dataset.lang);
+      });
+    });
 
-  </body>
+    // API hook
+    const API_URL = "/api/astrofood-ai";
+    const out = document.getElementById("ai-output");
+    document.getElementById("btn-recipe").addEventListener("click", async ()=>{
+      const sign = document.getElementById("sign").value;
+      const lang = document.getElementById("lang").value;
+      out.textContent = "🍳 Génération…";
+      try{
+        const r = await fetch(API_URL, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ sign, lang, mode:"recipe" })
+        });
+        const data = await r.json();
+        out.textContent = data.text || "⚠️ Pas de texte reçu.";
+      }catch(e){
+        out.textContent = "❌ Erreur front : "+e.message;
+      }
+    });
+  </script>
+</body>
 </html>
