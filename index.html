@@ -3,412 +3,467 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AstroFood Premium Gold – Chef-AI</title>
-  <meta name="description" content="AstroFood Premium Gold: recettes IA par signe (FR/EN/AR), packs payants, QR WhatsApp." />
+  <title>AstroFood Premium Gold — Desktop v16</title>
   <meta name="theme-color" content="#0f172a" />
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/assets/icon-192.png" sizes="192x192">
   <style>
-    :root { --gold:#FBBF24; --amber:#f59e0b; --bg: radial-gradient(circle at top, #0f172a, #020617 65%); }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column}
-    header{padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(251,191,36,.22);background:rgba(2,6,23,.35);position:sticky;top:0;backdrop-filter:blur(10px)}
-    .brand{display:flex;gap:.7rem;align-items:center}
-    .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(120deg,var(--gold),var(--amber));box-shadow:0 0 0 3px rgba(251,191,36,.12);display:grid;place-items:center;font-weight:800;color:#111}
-    .title{font-weight:800;letter-spacing:.2px}
-    .langs{display:flex;gap:.4rem}
-    .lang-btn{background:transparent;border:1px solid rgba(251,191,36,.25);color:#fff;cursor:pointer;padding:.35rem .7rem;border-radius:.55rem;font-size:.85rem}
-    .lang-btn.active{background:rgba(251,191,36,.12);color:var(--gold)}
-    main{width:min(1100px,100%);margin:1.25rem auto 3rem;padding:0 1rem;display:grid;gap:1rem}
-    .hero{display:grid;gap:1rem;grid-template-columns:1.1fr .9fr;align-items:center}
-    .hero h1{font-size:clamp(1.7rem,3.1vw,2.5rem);margin:.2rem 0}
-    .muted{color:rgba(255,255,255,.65)}
-    .btn{background:linear-gradient(120deg,var(--gold),var(--amber));border:none;color:#111827;padding:.6rem 1rem;border-radius:.65rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
-    .btn.outline{background:transparent;border:1px solid rgba(251,191,36,.35);color:#fff}
-    .card{background:rgba(2,6,23,.5);border:1px solid rgba(251,191,36,.2);border-radius:16px;padding:1rem}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-    .price{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-radius:14px;padding:1rem;text-align:center}
-    .price h3{margin:.4rem 0;color:var(--gold)}
-    .price .amount{font-size:1.6rem;font-weight:800;color:#fff}
-    .ai-out{white-space:pre-wrap;min-height:120px;border:1px dashed rgba(251,191,36,.25);border-radius:12px;padding:.8rem;margin-top:.6rem}
-    .qr{background:rgba(255,255,255,.9);border-radius:.8rem;display:grid;place-items:center;width:140px;height:140px;margin:.4rem auto}
-    footer{opacity:.7;text-align:center;padding:1rem;font-size:.85rem}
-    @media (max-width:960px){.hero{grid-template-columns:1fr}.grid2,.grid3{grid-template-columns:1fr}}
+    :root{
+      --bg: radial-gradient(1200px 600px at 20% -10%, #0f172a 0%, #020617 60%);
+      --surface: rgba(15,23,42,.6);
+      --surface-2: rgba(2,6,23,.65);
+      --border: #1f2937;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --gold:#FBBF24;
+      --accent:#38bdf8;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    *,*:before,*:after{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+      display:flex; flex-direction:column;
+    }
+    /* --- Topbar --- */
+    .topbar{display:flex; align-items:center; justify-content:space-between; padding:.9rem 1.25rem; border-bottom:1px solid var(--border); background:linear-gradient(to bottom, rgba(2,6,23,.9), rgba(2,6,23,.6)); position:sticky; top:0; z-index:30; backdrop-filter: blur(6px)}
+    .brand{display:flex; align-items:center; gap:.75rem}
+    .brand .dot{width:10px; height:10px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 6px rgba(251,191,36,.15)}
+    .brand h1{font-size:1.05rem; margin:0; letter-spacing:.4px; color:var(--gold)}
+    .actions{display:flex; align-items:center; gap:.5rem}
+    .badge{font-size:.75rem; opacity:.75; border:1px solid var(--border); padding:.25rem .5rem; border-radius:999px}
+
+    /* --- Layout --- */
+    .layout{display:grid; grid-template-columns: 340px 1fr; gap:1.25rem; padding:1.25rem; width:100%; max-width:1280px; margin:0 auto; flex:1}
+    @media (max-width: 960px){ .layout{grid-template-columns:1fr} }
+
+    .panel{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow)}
+
+    /* --- Sidebar (Controls) --- */
+    .sidebar{padding:1rem 1rem}
+    .sidebar h2{font-size:1rem; margin:.25rem 0 1rem; color:var(--muted)}
+    .field{margin-bottom:1rem}
+    .field label{display:block; margin-bottom:.4rem; font-size:.9rem; color:var(--muted)}
+    select, .btn{width:100%; padding:.7rem .85rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); outline:none}
+    select:focus{border-color:var(--accent); box-shadow:0 0 0 4px rgba(56,189,248,.15)}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:.75rem}
+
+    .btn.primary{background:var(--gold); color:#111827; border:none; font-weight:700; cursor:pointer}
+    .btn.primary:active{transform:translateY(1px)}
+    .hint{font-size:.82rem; color:var(--muted); margin-top:.35rem}
+
+    /* --- Content --- */
+    .content{display:flex; flex-direction:column}
+    .hero{padding:1rem 1.25rem; border-bottom:1px solid var(--border)}
+    .hero h3{margin:.2rem 0 .35rem; color:var(--gold)}
+    .hero p{margin:0; color:var(--muted)}
+
+    .work{display:grid; grid-template-columns: 1fr 420px; gap:1rem; padding:1rem}
+    @media (max-width: 1200px){ .work{grid-template-columns:1fr} }
+
+    .output{min-height:280px; padding:1rem; border:1px dashed var(--border); border-radius:12px; background:rgba(2,6,23,.45)}
+    .output h4{margin:.25rem 0 .5rem}
+    .toolbar{display:flex; gap:.5rem; margin-bottom:.6rem}
+    .tool{padding:.5rem .7rem; border:1px solid var(--border); border-radius:10px; background:var(--surface-2); color:var(--text); cursor:pointer}
+    .tool:active{transform:translateY(1px)}
+
+    .preview{padding:0; overflow:hidden}
+    .preview-head{display:flex; align-items:center; justify-content:space-between; padding:.75rem 1rem; border-bottom:1px solid var(--border)}
+    .preview iframe{width:100%; height:420px; border:0; display:block; background:#0b1220}
+
+    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.75rem; border:1px solid var(--border); border-bottom-width:3px; padding:.08rem .35rem; border-radius:6px; background:var(--surface-2)}
   </style>
- </head>
-   <body>
-    <header>
-     <div class="brand">
-      <div class="logo">AF</div>
-      <div>
-        <div class="title" data-i18n-fr="AstroFood Premium Gold" data-i18n-en="AstroFood Premium Gold" data-i18n-ar="أستروفود بريميوم جولد">AstroFood Premium Gold</div>
-        <div class="muted" data-i18n-fr="Recettes IA par signe" data-i18n-en="AI recipes by zodiac" data-i18n-ar="وصفات بالذكاء الاصطناعي حسب الأبراج">Recettes IA par signe</div>
-      </div>
-     </div>
-    <div class="langs">
-      <button class="lang-btn active" data-lang="fr">FR</button>
-      <button class="lang-btn" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="ar">العربية</button>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="dot"></span><h1>AstroFood Premium Gold</h1></div>
+    <div class="actions">
+      <span class="badge">Desktop layout</span>
+      <span class="badge">v16 Demo</span>
     </div>
   </header>
 
-   <main>
-    <!-- HERO -->
-     <section class="hero card">
-       <div>
-        <h1 data-i18n-fr="Cuisine guidée par les astres" data-i18n-en="Cooking guided by the stars" data-i18n-ar="مطبخك وفق حركة الكواكب">Cuisine guidée par les astres</h1>
-        <p class="muted" data-i18n-fr="Choisis ton signe et ta langue : l’IA propose 3 repas + boissons + carte téléchargeable." data-i18n-en="Choose your sign & language: AI suggests 3 meals + drinks + a downloadable card." data-i18n-ar="اختر برجك ولغتك: الذكاء الاصطناعي يقترح 3 وجبات + مشروبات + بطاقة قابلة للتنزيل.">Choisis ton signe et ta langue : l’IA propose 3 repas + boissons + carte téléchargeable.</p>
-        <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem">
-          <a class="btn" href="#ai">🚀 <span data-i18n-fr="Lancer Chef-AI" data-i18n-en="Start Chef-AI" data-i18n-ar="تشغيل الشيف-AI">Lancer Chef-AI</span></a>
-          <a class="btn outline" href="#pricing">💳 <span data-i18n-fr="Packs & achats" data-i18n-en="Packs & purchase" data-i18n-ar="الباقات والشراء">Packs & achats</span></a>
-      
-      </div>
-        <div class="card" style="text-align:center">
-        <div class="muted" style="margin-bottom:.3rem" data-i18n-fr="WhatsApp direct" data-i18n-en="Direct WhatsApp" data-i18n-ar="واتساب مباشر">WhatsApp direct</div>
-        <div class="qr">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://wa.me/221786599051" width="140" height="140" alt="QR WhatsApp" />
-        </div>
-        </div>
-        <div style="font-size:.8rem;color:var(--gold);letter-spacing:.05em">+221 78 659 90 51</div>
-      </div>
-     </div>
-    </section>
-
-    <!-- AI SECTION -->
-    <section id="ai" class="card">
-      <h2 style="color:var(--gold)" data-i18n-fr="Assistant Chef-AI" data-i18n-en="Chef-AI Assistant" data-i18n-ar="مساعد الشيف-AI">Assistant Chef-AI</h2>
-   <div class="grid2">
-       <div>
-       <label>Votre signe</label>
-       <select id="sign">
-         <option>Bélier</option><option>Taureau</option><option>Gémeaux</option>
-         <option>Cancer</option><option>Lion</option><option>Vierge</option>
-         <option>Balance</option><option>Scorpion</option><option>Sagittaire</option>
-         <option>Capricorne</option><option>Verseau</option><option>Poissons</option>
+  <main class="layout">
+    <!-- Sidebar Controls -->
+    <aside class="panel sidebar" id="controls">
+      <h2>Contrôles</h2>
+      <div class="field">
+        <label>Langue</label>
+        <select id="lang">
+          <option value="fr">Français</option>
+          <option value="en">English</option>
+          <option value="ar">العربية</option>
         </select>
-    </div>
-
-    <div>
-      <label>Langue</label>
-      <select id="lang">
-       <option value="fr">Français</option>
-       <option value="en">English</option>
-       <option value="ar">العربية</option>
-     </select>
-   </div>
-
-  <div>
-      <label>Objectif / État</label>
-       <select id="state">
-        <option value="detox">Détox</option>
-        <option value="energy_boost">Booster énergie</option>
-        <option value="stress_relief">Anti-stress</option>
-        <option value="immunity">Immunité</option>
-        <option value="digestion">Digestion</option>
-        <option value="metabolic_balance">Balance métabolique</option>
-      </select>
-   </div>
-
-   <div>
-     <label>Plan de repas</label>
-     <select id="plan">
-      <option value="single">Recette unique</option>
-      <option value="daily3">3 repas / jour</option>
-    </select>
-  </div>
-</div>
-      <button class="btn" id="btn-recipe" style="margin-top:.7rem">🍳 <span data-i18n-fr="Générer" data-i18n-en="Generate" data-i18n-ar="إنشاء">Générer</span></button>
-      <div id="ai-output" class="ai-out">Prêt.</div>
-      <div style="margin-top:.6rem">
-        <a class="btn" id="open-digital-card" href="/card.html" target="_blank" rel="noopener">
-          📇 Afficher la carte digitale
-        </a>
+        <div class="hint">Astuce : <span class="kbd">L</span> pour basculer rapidement.</div>
       </div>
-    </div>
-  </section>
-    <!-- PRICING -->
-    <section id="pricing" class="card">
-      <h2 style="color:#fff" data-i18n-fr="Packs Premium" data-i18n-en="Premium Packs" data-i18n-ar="الباقات المميزة">Packs Premium</h2>
-      <div class="grid3">
-        <div class="price">
-          <h3>Starter</h3>
-          <div class="amount">5,99 €</div>
-          <p class="muted">12 cartes digitales (1 par signe) – FR</p>
-          <a class="btn" href="https://astrofoody.lemonsqueezy.com" target="_blank" rel="noopener">Acheter</a>
-        </div>
-        <div class="price" style="border:2px solid var(--gold)">
-          <h3>Premium Gold</h3>
-          <div class="amount">14,99 €</div>
-          <p class="muted">36 cartes (FR/EN/AR) + recettes IA illimitées</p>
-          <a class="btn" href="https://astrofoody.lemonsqueezy.com" target="_blank" rel="noopener">Acheter</a>
-        </div>
-        <div class="price">
-          <h3>Business</h3>
-          <div class="amount">49,00 €</div>
-          <p class="muted">Licence boutique + modèles marketing</p>
-          <a class="btn" href="https://astrofoody.lemonsqueezy.com" target="_blank" rel="noopener">Acheter</a>
-        </div>
-       </div>
-       </section>
-     </main>
 
-  <footer>© AstroFood Premium Gold • PWA • Vercel Ready</footer>
+      <div class="field">
+        <label>Votre signe</label>
+        <select id="sign">
+          <option value="aries">Bélier</option><option value="taurus">Taureau</option>
+          <option value="gemini">Gémeaux</option><option value="cancer">Cancer</option>
+          <option value="leo">Lion</option><option value="virgo">Vierge</option>
+          <option value="libra">Balance</option><option value="scorpio">Scorpion</option>
+          <option value="sagittarius">Sagittaire</option><option value="capricorn">Capricorne</option>
+          <option value="aquarius">Verseau</option><option value="pisces">Poissons</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Objectif / État</label>
+          <select id="state">
+            <option value="detox">Détox</option>
+            <option value="energy_boost">Booster énergie</option>
+            <option value="stress_relief">Anti-stress</option>
+            <option value="immunity">Immunité</option>
+            <option value="digestion">Digestion</option>
+            <option value="metabolic_balance">Balance métabolique</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Plan de repas</label>
+          <select id="plan">
+            <option value="single">Recette unique</option>
+            <option value="daily3">3 repas / jour</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <button class="btn primary" id="btn-recipe" type="button">🍳 Générer <span class="hint" style="margin-left:.35rem">(<span class="kbd">Ctrl</span> + <span class="kbd">Entrée</span>)</span></button>
+      </div>
+
+      <div class="field">
+        <a class="btn" id="open-digital-card" href="/card.html" target="previewFrame" rel="noopener">📇 Ouvrir la carte digitale</a>
+        <div class="hint">La carte s'ouvre dans l'aperçu à droite.</div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <section class="panel content">
+      <div class="hero">
+        <h3>Assistant Chef‑AI</h3>
+        <p>Générez des recettes et plans 3 repas adaptés à votre signe et votre objectif.</p>
+      </div>
+
+      <div class="work">
+        <div>
+          <div class="toolbar">
+            <button class="tool" id="copy-html">Copier HTML</button>
+            <button class="tool" id="clear-output">Effacer</button>
+          </div>
+          <div id="ai-output" class="output">Prêt.</div>
+        </div>
+
+        <div class="panel preview">
+          <div class="preview-head">
+            <div style="opacity:.8">Aperçu de la carte digitale</div>
+            <div class="hint">Basculer : <span class="kbd">P</span></div>
+          </div>
+          <iframe id="preview" name="previewFrame" title="Aperçu carte"></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <script>
-    // Multilang toggle
-    function setLang(lang){
-      document.querySelectorAll('[data-i18n-fr]').forEach(el=>{
-        const fr = el.getAttribute('data-i18n-fr');
-        const en = el.getAttribute('data-i18n-en');
-        const ar = el.getAttribute('data-i18n-ar');
-        if(lang==='fr') el.textContent = fr;
-        if(lang==='en') el.textContent = en;
-        if(lang==='ar') el.textContent = ar;
-      });
-      if(lang==='ar'){
-        document.documentElement.lang='ar';
-        document.body.dir='rtl';
-        document.body.style.fontFamily="'Cairo',sans-serif";
-      }else{
-        document.documentElement.lang = lang==='en'?'en':'fr';
-        document.body.dir='ltr';
-        document.body.style.fontFamily="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
-      } 
-    }
-        document.querySelectorAll('.lang-btn').forEach(b=>{
-        b.addEventListener('click',()=>{
-        document.querySelectorAll('.lang-btn').forEach(x=>x.classList.remove('active'));
-        b.classList.add('active');
-        setLang(b.dataset.lang);
-        });
-    });
+  (() => {
+    if (window.__ASTROFOOD_INIT__) return; window.__ASTROFOOD_INIT__ = true;
+    const TEST_MODE = true; // Passez à false quand l'API est prête
 
-    // =========================
-    // API hook + SYNC PATCH
-    // =========================
-    const API_URL = "/api/astrofood-ai";
-    const out = document.getElementById("ai-output");
-    function elementFromSign(frSign){
-  const s = (frSign || "").toLowerCase();
-  if (["bélier","belier","lion","sagittaire"].some(x=>s.includes(x))) return "Feu";
-  if (["taureau","vierge","capricorne"].some(x=>s.includes(x))) return "Terre";
-  if (["gémeaux","gemeaux","balance","verseau"].some(x=>s.includes(x))) return "Air";
-  if (["cancer","scorpion","poissons"].some(x=>s.includes(x))) return "Eau";
-  return "—";
-      
- }
-    document.getElementById("btn-recipe").addEventListener("click", async ()=>{
-      const sign = document.getElementById("sign").value;
-      const lang = document.getElementById("lang").value;
-      const state = document.getElementById("state")?.value || "detox";
-      const element = elementFromSign(sign); 
-      const plan = document.getElementById("plan")?.value || "daily3"; 
-      
-      out.textContent = "🍳 Génération…";
-      try{
-        const r = await fetch(API_URL, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({ sign, lang, mode:"recipe",
-                 goal: state,            
-                 element    
-            })
-        });
-        const data = await r.json();
+    const $ = s => document.querySelector(s);
+    const lang = $('#lang');
+    const sign = $('#sign');
+    const state = $('#state');
+    const plan = $('#plan');
+    const out = $('#ai-output');
+    const btn = $('#btn-recipe');
+    const openCard = $('#open-digital-card');
+    const iframe = $('#preview');
 
-        // ----- Affichage texte (ton comportement actuel)
-        out.textContent = data.text || "⚠️ Pas de texte reçu.";
-
-        // ----- 🔗 PATCH de synchronisation (carte digitale)
-        const recipe = {
-          sign, lang,
-          mode: plan === "daily3" ? "daily_menu" : "recipe", 
-          goal: state,           // 👈 on stocke l’objectif
-          element, 
-           meals: ["breakfast","lunch","dinner"]  
-             
-          title: data.title || data.recipe?.title || "Recette",
-          description: data.description || data.recipe?.description || (data.text ?? ""),
-          ingredients: data.ingredients || data.recipe?.ingredients || [],
-          steps: data.steps || data.recipe?.steps || [],
-          image: data.image || data.recipe?.image || ""
-        };
-        try {
-          localStorage.setItem("astro:lastRecipe", JSON.stringify(recipe));
-        } catch(e) {
-          console.warn("localStorage indisponible", e);
-        }
-        // Evènement pour une carte sur la même page (si jamais)
-        window.dispatchEvent(new CustomEvent("astro:recipe-updated", { detail: recipe }));
-
-      }catch(e){
-        out.textContent = "❌ Erreur front : "+e.message;
-      }
-  
-(() => {
-  if (window.__ASTROFOOD_INIT__) return;
-  window.__ASTROFOOD_INIT__ = true;
-
-  // --- Raccourcis DOM
-  const $ = (s) => document.querySelector(s);
-  const btn   = $("#btn-recipe");
-  const lang  = $("#lang");
-  const sign  = $("#sign");
-  const state = $("#state");
-  const plan  = $("#plan");
-  const out   = $("#ai-output");
-  const openCard = $("#open-digital-card");
-
-  if (!btn || !lang || !sign || !state || !plan || !out) {
-    console.warn("[AstroFood] IDs manquants.");
-    return;
-  }
-
-  // --- i18n simple (utilise aussi data-i18n-* déjà présents dans ton HTML)
-  const T = {
-    fr: {
-      generating: "🍳 Génération…",
-      error: "❌ Erreur de génération",
-      breakfast: "Petit-déjeuner",
-      lunch: "Déjeuner",
-      dinner: "Dîner",
-      title_recipe: "Recette",
-      title_plan: "Plan de repas"
-    },
-    en: {
-      generating: "🍳 Generating…",
-      error: "❌ Generation error",
-      breakfast: "Breakfast",
-      lunch: "Lunch",
-      dinner: "Dinner",
-      title_recipe: "Recipe",
-      title_plan: "Meal plan"
-    },
-    ar: {
-      generating: "🍳 جاري الإنشاء…",
-      error: "❌ خطأ في الإنشاء",
-      breakfast: "فطور",
-      lunch: "غداء",
-      dinner: "عشاء",
-      title_recipe: "وصفة",
-      title_plan: "خطة وجبات"
-    }
-  };
-
-  function setLang(code) {
-    document.documentElement.lang = code;
-    document.documentElement.dir = (code === "ar") ? "rtl" : "ltr";
-
-    // Met à jour les éléments qui portent data-i18n-*
-    document.querySelectorAll("[data-i18n-fr]").forEach(el => {
-      const key = `data-i18n-${code}`;
-      if (el.hasAttribute(key)) el.textContent = el.getAttribute(key);
-    });
-  }
-  setLang(lang.value || "fr");
-  lang.addEventListener("change", () => setLang(lang.value || "fr"));
-
-  // --- Normalisation des signes (ton <select id="sign"> n'a pas de values)
-  const SIGN_MAP = {
-    // FR
-    "bélier":"aries","taureau":"taurus","gémeaux":"gemini","cancer":"cancer",
-    "lion":"leo","vierge":"virgo","balance":"libra","scorpion":"scorpio",
-    "sagittaire":"sagittarius","capricorne":"capricorn","verseau":"aquarius","poissons":"pisces",
-    // EN
-    "aries":"aries","taurus":"taurus","gemini":"gemini","cancer":"cancer",
-    "leo":"leo","virgo":"virgo","libra":"libra","scorpio":"scorpio",
-    "sagittarius":"sagittarius","capricorn":"capricorn","aquarius":"aquarius","pisces":"pisces",
-    // AR (translits courtes usuelles)
-    "الحمل":"aries","الثور":"taurus","الجوزاء":"gemini","السرطان":"cancer",
-    "الأسد":"leo","العذراء":"virgo","الميزان":"libra","العقرب":"scorpio",
-    "القوس":"sagittarius","الجدي":"capricorn","الدلو":"aquarius","الحوت":"pisces"
-  };
-
-  function getSignKey() {
-    // Si jamais tu ajoutes plus tard des value="aries", on les prend en priorité
-    const v = (sign.value || "").trim();
-    if (SIGN_MAP[v.toLowerCase()]) return SIGN_MAP[v.toLowerCase()];
-    // Sinon on regarde le texte sélectionné
-    const txt = (sign.options[sign.selectedIndex]?.text || "").trim().toLowerCase();
-    return SIGN_MAP[txt] || "aries";
-  }
-
-  // --- API
-  const API_URL = window.ASTROFOOD_API_URL || "/api/astrofood";
-  let busy = false;
-
-  btn.addEventListener("click", async (e) => {
-    e.preventDefault();
-    if (busy) return;
-    busy = true;
-
-    const lg = lang.value || "fr";
-    const ui = T[lg] || T.fr;
-    out.textContent = ui.generating;
-
-    const payload = {
-      lang: lg,
-      sign: getSignKey(),
-      state: state.value || "detox",
-      plan: plan.value || "single",
-      mode: (plan.value === "daily3") ? "mealplan" : "recipe"
+    // i18n minimal
+    const T = {
+      fr:{generating:'🍳 Génération…', error:'❌ Erreur de génération', breakfast:'Petit‑déjeuner', lunch:'Déjeuner', dinner:'Dîner', title_recipe:'Recette', title_plan:'Plan de repas'},
+      en:{generating:'🍳 Generating…', error:'❌ Generation error', breakfast:'Breakfast', lunch:'Lunch', dinner:'Dinner', title_recipe:'Recipe', title_plan:'Meal plan'},
+      ar:{generating:'🍳 جاري الإنشاء…', error:'❌ خطأ في الإنشاء', breakfast:'فطور', lunch:'غداء', dinner:'عشاء', title_recipe:'وصفة', title_plan:'خطة وجبات'}
     };
 
-    try {
-      const r = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      const data = await r.json();
-
-      // Rendus flexibles selon la réponse API
-      if (payload.mode === "mealplan") {
-        // Attendu idéal: data.breakfast / data.lunch / data.dinner (texte HTML ou texte simple)
-        const b = data?.breakfast || data?.petit_dejeuner || data?.pdj || "";
-        const l = data?.lunch || data?.dejeuner || "";
-        const d = data?.dinner || data?.diner || "";
-
-        out.innerHTML = `
-          <h3>${ui.title_plan}</h3>
-          <div class="grid2" style="gap:1rem;">
-            <div><h4>${ui.breakfast}</h4><p>${b || "—"}</p></div>
-            <div><h4>${ui.lunch}</h4><p>${l || "—"}</p></div>
-            <div><h4>${ui.dinner}</h4><p>${d || "—"}</p></div>
-          </div>
-        `;
-      } else {
-        // Attendu idéal: data.title / data.recipe
-        const title = data?.title || ui.title_recipe;
-        const body  = data?.recipe || data?.content || data?.text || "";
-        out.innerHTML = `<h3>${title}</h3><p>${body || "—"}</p>`;
-      }
-    } catch (err) {
-      console.error(err);
-      out.textContent = (T[lang.value]?.error || T.fr.error);
-    } finally {
-      busy = false;
+    function setLang(code){
+      document.documentElement.lang = code;
+      document.documentElement.dir = (code === 'ar') ? 'rtl' : 'ltr';
     }
-  });
+    setLang(lang.value || 'fr');
+    lang.addEventListener('change', ()=> setLang(lang.value || 'fr'));
 
-  // --- Synchroniser la "carte digitale" avec les paramètres choisis
-  if (openCard) {
-    openCard.addEventListener("click", (e) => {
-      // on garde target=_blank, on ajoute les query params
-      const params = new URLSearchParams({
-        sign: getSignKey(),
-        lang: (lang.value || "fr"),
-        state: (state.value || "detox"),
-        plan: (plan.value || "single")
-      });
-      const url = new URL(openCard.getAttribute("href"), window.location.origin);
-      url.search = params.toString();
-      openCard.setAttribute("href", url.toString());
+    const API_URL = window.ASTROFOOD_API_URL || '/api/astrofood';
+    let busy = false;
+
+    async function generate(){
+      if (busy) return; busy = true;
+      const lg = lang.value || 'fr';
+      const ui = T[lg] || T.fr;
+      out.textContent = ui.generating;
+
+      const payload = {
+        lang: lg,
+        sign: sign.value,
+        state: state.value,
+        plan: plan.value,
+        mode: (plan.value === 'daily3') ? 'mealplan' : 'recipe'
+      };
+
+      try{
+        if (TEST_MODE){
+          if (payload.mode === 'mealplan'){
+            out.innerHTML = `
+              <h4>${ui.title_plan}</h4>
+              <ul>
+                <li><strong>${ui.breakfast}:</strong> Omelette astrale aux herbes 🌿</li>
+                <li><strong>${ui.lunch}:</strong> Salade quinoa‑mangue ✨</li>
+                <li><strong>${ui.dinner}:</strong> Saumon citron‑miel, légumes rôtis 🌙</li>
+              </ul>`;
+          } else {
+            out.innerHTML = `<h4>${ui.title_recipe}</h4><p>Shake détox citron‑gingembre‑menthe 🍋🌱</p>`;
+          }
+          busy = false; return;
+        }
+
+        const r = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        const data = await r.json();
+        if (payload.mode === 'mealplan'){
+          const b = data?.breakfast || '—';
+          const l = data?.lunch || '—';
+          const d = data?.dinner || '—';
+          out.innerHTML = `<h4>${ui.title_plan}</h4>
+            <ul>
+              <li><strong>${ui.breakfast}:</strong> ${b}</li>
+              <li><strong>${ui.lunch}:</strong> ${l}</li>
+              <li><strong>${ui.dinner}:</strong> ${d}</li>
+            </ul>`;
+        } else {
+          const title = data?.title || ui.title_recipe;
+          const body  = data?.recipe || data?.content || data?.text || '—';
+          out.innerHTML = `<h4>${title}</h4><p>${body}</p>`;
+        }
+      } catch(err){
+        console.error(err);
+        out.textContent = (T[lang.value]?.error || T.fr.error);
+      } finally{ busy = false; }
+    }
+
+    btn.addEventListener('click', generate);
+
+    // Raccourcis clavier: Ctrl+Enter pour générer / L pour langue / P pour focus Preview
+    document.addEventListener('keydown', (e)=>{
+      if (e.ctrlKey && e.key === 'Enter') { generate(); }
+      if (!e.ctrlKey && (e.key === 'l' || e.key === 'L')) { // cycle langues
+        const values = ['fr','en','ar'];
+        const i = values.indexOf(lang.value);
+        lang.value = values[(i+1)%values.length];
+        lang.dispatchEvent(new Event('change'));
+      }
+      if (!e.ctrlKey && (e.key === 'p' || e.key === 'P')) { iframe?.focus(); }
     });
-  }
-})();
-</script>
+
+    // Ouvrir la carte digitale dans l'iframe (et synchroniser les query params)
+    function cardURL(){
+      const params = new URLSearchParams({ sign:sign.value, lang:lang.value, state:state.value, plan:plan.value });
+      const base = openCard.getAttribute('href') || '/card.html';
+      const url = new URL(base, window.location.origin);
+      url.search = params.toString();
+      return url.toString();
+    }
+    openCard.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const url = cardURL();
+      openCard.setAttribute('href', url);
+      if (iframe) iframe.src = url; // charge dans l'aperçu
+    });
+
+    // Copier le HTML de sortie
+    $('#copy-html').addEventListener('click', async ()=>{
+      try{
+        const html = out.innerHTML.trim();
+        await navigator.clipboard.writeText(html);
+        alert('HTML copié ✅');
+      }catch(err){ alert('Impossible de copier'); }
+    });
+
+    $('#clear-output').addEventListener('click', ()=>{ out.textContent = 'Prêt.'; });
+  })();
+  </script>
+</body>
+</html>
+
+
+<!-- ===================
+     CARD.HTML (Carte Digitale – Desktop v16)
+     =================== -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AstroFood – Carte Digitale</title>
+  <meta name="theme-color" content="#0f172a" />
+  <style>
+    :root{
+      --bg: radial-gradient(1200px 600px at 20% -10%, #0f172a 0%, #020617 60%);
+      --surface: rgba(15,23,42,.6);
+      --surface-2: rgba(2,6,23,.65);
+      --border: #1f2937;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --gold:#FBBF24;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    *,*:before,*:after{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif; display:flex; justify-content:center; align-items:flex-start}
+    .wrap{width:100%; max-width:820px; margin:2rem 1rem}
+
+    .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden}
+    .head{display:flex; align-items:center; justify-content:space-between; padding:1rem 1.25rem; border-bottom:1px solid var(--border); background:linear-gradient(to bottom, rgba(2,6,23,.9), rgba(2,6,23,.6))}
+    .sign{display:flex; align-items:center; gap:.8rem}
+    .sign .ico{font-size:1.5rem}
+    .sign h1{margin:0; font-size:1.15rem; letter-spacing:.3px; color:var(--gold)}
+    .badges{display:flex; gap:.5rem; flex-wrap:wrap}
+    .badge{font-size:.78rem; padding:.25rem .6rem; border:1px solid var(--border); border-radius:999px; color:var(--muted); background:var(--surface-2)}
+
+    .body{padding:1.25rem}
+    .grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem}
+    @media(max-width:860px){ .grid{grid-template-columns:1fr} }
+    .section{border:1px dashed var(--border); border-radius:12px; padding:1rem; background:rgba(2,6,23,.45)}
+    .section h3{margin:.2rem 0 .6rem; color:var(--gold)}
+
+    .footer{display:flex; align-items:center; justify-content:space-between; padding:1rem 1.25rem; border-top:1px solid var(--border); background:rgba(2,6,23,.5)}
+    .btn{padding:.65rem .9rem; border-radius:12px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); cursor:pointer}
+    .btn.primary{background:var(--gold); color:#111827; border:none; font-weight:700}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" id="card">
+      <div class="head">
+        <div class="sign">
+          <div class="ico" id="sign-ico">♈︎</div>
+          <h1 id="title">Carte digitale</h1>
+        </div>
+        <div class="badges">
+          <div class="badge" id="badge-sign">—</div>
+          <div class="badge" id="badge-state">—</div>
+          <div class="badge" id="badge-plan">—</div>
+          <div class="badge" id="badge-lang">FR</div>
+        </div>
+      </div>
+
+      <div class="body" id="body">
+        <div class="section" id="single">
+          <h3 id="single-title">Recette</h3>
+          <div id="single-content">Chargement…</div>
+        </div>
+        <div class="grid" id="daily3" style="display:none">
+          <div class="section">
+            <h3 id="h-breakfast">Petit‑déjeuner</h3>
+            <div id="c-breakfast">—</div>
+          </div>
+          <div class="section">
+            <h3 id="h-lunch">Déjeuner</h3>
+            <div id="c-lunch">—</div>
+          </div>
+          <div class="section">
+            <h3 id="h-dinner">Dîner</h3>
+            <div id="c-dinner">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div style="opacity:.8">Lien partageable prêt</div>
+        <div>
+          <button class="btn" id="refresh">Rafraîchir</button>
+          <button class="btn" id="copy-url">Copier l’URL</button>
+          <a class="btn primary" id="open-self" href="#" target="_blank" rel="noopener">Ouvrir dans un onglet</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (() => {
+    const params = new URLSearchParams(location.search);
+    const lang = (params.get('lang') || 'fr').toLowerCase();
+    const sign = (params.get('sign') || 'aries').toLowerCase();
+    const state = (params.get('state') || 'detox').toLowerCase();
+    const plan = (params.get('plan') || 'single').toLowerCase();
+
+    // i18n minimal
+    const T = {
+      fr:{recipe:'Recette', plan:'Plan de repas', breakfast:'Petit‑déjeuner', lunch:'Déjeuner', dinner:'Dîner', copied:'URL copiée ✅'},
+      en:{recipe:'Recipe', plan:'Meal plan', breakfast:'Breakfast', lunch:'Lunch', dinner:'Dinner', copied:'URL copied ✅'},
+      ar:{recipe:'وصفة', plan:'خطة وجبات', breakfast:'فطور', lunch:'غداء', dinner:'عشاء', copied:'تم نسخ الرابط ✅'}
+    };
+    const ui = T[lang] || T.fr;
+
+    document.documentElement.lang = lang;
+    document.documentElement.dir = (lang==='ar')?'rtl':'ltr';
+
+    // Icônes Zodiac simples
+    const ICON = { aries:'♈︎', taurus:'♉︎', gemini:'♊︎', cancer:'♋︎', leo:'♌︎', virgo:'♍︎', libra:'♎︎', scorpio:'♏︎', sagittarius:'♐︎', capricorn:'♑︎', aquarius:'♒︎', pisces:'♓︎' };
+
+    // Libellés pour badges
+    const SIGN_LABEL = { fr:{aries:'Bélier',taurus:'Taureau',gemini:'Gémeaux',cancer:'Cancer',leo:'Lion',virgo:'Vierge',libra:'Balance',scorpio:'Scorpion',sagittarius:'Sagittaire',capricorn:'Capricorne',aquarius:'Verseau',pisces:'Poissons'},
+                         en:{aries:'Aries',taurus:'Taurus',gemini:'Gemini',cancer:'Cancer',leo:'Leo',virgo:'Virgo',libra:'Libra',scorpio:'Scorpio',sagittarius:'Sagittarius',capricorn:'Capricorn',aquarius:'Aquarius',pisces:'Pisces'},
+                         ar:{aries:'الحمل',taurus:'الثور',gemini:'الجوزاء',cancer:'السرطان',leo:'الأسد',virgo:'العذراء',libra:'الميزان',scorpio:'العقرب',sagittarius:'القوس',capricorn:'الجدي',aquarius:'الدلو',pisces:'الحوت'} };
+
+    // Démo locale – recettes statiques simples selon le signe
+    const DEMO = (key) => {
+      const base = {
+        single:`Shake détox ${key} : citron – gingembre – menthe 🍋🌱`,
+        breakfast:`Overnight oats ${key} – miel & noix`,
+        lunch:`Bowl ${key} – quinoa, mangue, gingembre ✨`,
+        dinner:`Filet de saumon ${key} – citron & légumes rôtis 🌙`
+      };
+      return base;
+    };
+
+    // Remplissage UI
+    document.getElementById('sign-ico').textContent = ICON[sign] || '✦';
+    document.getElementById('title').textContent = (plan==='daily3') ? ui.plan : ui.recipe;
+    document.getElementById('badge-sign').textContent = SIGN_LABEL[lang]?.[sign] || sign;
+    document.getElementById('badge-state').textContent = state;
+    document.getElementById('badge-plan').textContent = (plan==='daily3') ? '3×' : '1×';
+    document.getElementById('badge-lang').textContent = lang.toUpperCase();
+
+    document.getElementById('h-breakfast').textContent = ui.breakfast;
+    document.getElementById('h-lunch').textContent = ui.lunch;
+    document.getElementById('h-dinner').textContent = ui.dinner;
+    document.getElementById('single-title').textContent = ui.recipe;
+
+    const data = DEMO(sign);
+    if (plan === 'daily3'){
+      document.getElementById('single').style.display = 'none';
+      document.getElementById('daily3').style.display = '';
+      document.getElementById('c-breakfast').textContent = data.breakfast;
+      document.getElementById('c-lunch').textContent = data.lunch;
+      document.getElementById('c-dinner').textContent = data.dinner;
+    } else {
+      document.getElementById('single').style.display = '';
+      document.getElementById('daily3').style.display = 'none';
+      document.getElementById('single-content').textContent = data.single;
+    }
+
+    // Actions
+    const urlStr = location.href;
+    document.getElementById('open-self').href = urlStr;
+    document.getElementById('copy-url').addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(urlStr); alert(ui.copied); }catch(e){ alert('Copy failed'); }
+    });
+    document.getElementById('refresh').addEventListener('click', ()=> location.reload());
+  })();
+  </script>
 </body>
 </html>
