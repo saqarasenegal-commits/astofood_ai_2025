@@ -1,22 +1,13 @@
 
 // api/chef-ai.js (debug version) - REMPLACE TEMPORAIREMENT
-export default async function handler(req, res) {
-  res.setHeader("Content-Type", "application/json");
-  // Allow CORS for quick debug if testing from browser
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") return res.status(204).end();
-
-  console.log("===== /api/chef-ai called =====");
+// api/chef-ai.js (check env - minimal)
+export default function handler(req, res) {
+  console.log(">>> minimal-check called");
   const key = process.env.OPENAI_API_KEY;
-  console.log("🔑 OPENAI_API_KEY present?", !!key, "len:", key ? key.length : 0);
-
-  if (!key) {
-    console.error("❌ NO OPENAI_API_KEY in env");
-    return res.status(500).json({ error: "NO_OPENAI_API_KEY_IN_ENV" });
-  }
+  console.log("🔑 KEY_PRESENT?", !!key, "len:", key ? key.length : 0);
+  res.setHeader("Content-Type","application/json");
+  return res.status(200).json({ ok: true, key_present: !!key, key_len: key ? key.length : 0 });
+}
 
   // parse body safely
   let body = {};
