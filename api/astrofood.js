@@ -1,138 +1,124 @@
+// api/chef-ai.js
+// Si ton runtime n'a pas fetch global, décommente la ligne suivante:
+// import fetch from 'node-fetch';
+
 export default async function handler(req, res) {
-  // --- CORS ---
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  // Autoriser CORS simple (adaptable : en prod restreins le domaine)
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === "OPTIONS") return res.status(204).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Use POST" });
+  if (req.method === 'OPTIONS') return res.status(204).end();
 
-  // --- DEBUG ---
-  if (req.method === "GET" && (req.url.includes("debug=1") || req.query?.debug === "1")) {
-    const apiKey = process.env.OPENAI_API_KEY;
-    return res.status(200).json({
-      ok: true,
-      hasKey: !!apiKey,
-      keyPreview: apiKey ? apiKey.slice(0, 8) + "..." : null,
-      env: process.env.VERCEL_ENV || "unknown",
-    });
-  }
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return res.status(200).json({
-      ok: false,
-      text: "⚠️ Aucune clé API détectée (OPENAI_API_KEY manquante).",
-    });
-  }
-
-  // --- Lecture du corps ---
-  const { sign = "Poissons", lang = "fr", mode = "recipe", state, base } = req.body || {};
-
-  // 🧠 MODE 1 : CONSEIL NUTRITIONNEL
-  if (mode === "advice") {
-    const t = lang === "en"
-      ? { do: ["Hydrate well", "Eat leafy greens"], avoid: ["Excess sugar", "Ultra-processed foods"] }
-      : lang === "ar"
-      ? { do: ["اشرب الماء جيدًا", "الخضروات الورقية"], avoid: ["السكريات الزائدة", "الأطعمة المصنعة"] }
-      : { do: ["Bien s’hydrater", "Légumes verts"], avoid: ["Excès de sucre", "Produits ultra-transformés"] };
-
-    return res.status(200).json({ advice: t });
-  }
-
-  // 👩‍🍳 MODE 2 : RECETTE PAR PRODUIT AFRICAIN
-  if (mode === "recipe_from_product") {
-    const product = (base || "").toLowerCase();
-    const recipe = {
-      title:
-        lang === "en"
-          ? `Chef's ${product} Bowl`
-          : lang === "ar"
-          ? `طبق ${product} من الشيف`
-          : `Bol de ${product} du Chef`,
-      intro:
-        lang === "en"
-          ? `A simple ${product}-based recipe tuned for ${sign}/${state}.`
-          : lang === "ar"
-          ? `وصفة بسيطة تعتمد على ${product} مهيّأة لـ ${sign}/${state}.`
-          : `Recette simple à base de ${product} adaptée à ${sign}/${state}.`,
-      ingredients: [
-        { item: product, qty: 200, unit: "g" },
-        { item: lang === "fr" ? "Oignon" : "Onion", qty: 1 },
-        { item: lang === "fr" ? "Ail" : "Garlic", qty: 2, unit: "gousses" },
-        { item: lang === "fr" ? "Huile" : "Oil", qty: 1, unit: "cs" },
-      ],
-      steps: [
-        { n: 1, text: lang === "fr" ? "Préparer et couper." : "Prep and dice.", timer_sec: 0 },
-        { n: 2, text: lang === "fr" ? "Faire revenir 2 min." : "Sauté for 2 min.", timer_sec: 120 },
-        {
-          n: 3,
-          text:
-            lang === "fr"
-              ? `Ajouter ${product} et cuire 8 min.`
-              : `Add ${product} and cook 8 min.`,
-          timer_sec: 480,
-        },
-      ],
-      substitutions: [lang === "fr" ? "Huile → beurre clarifié" : "Oil → ghee"],
-    };
-
-    return res.status(200).json({ recipe });
-  }
-
-  // 🔮 AUTRES MODES (recettes normales) => via OpenAI
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
+    const { prompt, sign, meal, lang } = req.body || {};
+    if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
+
+    // Construire un prompt strict pour forcer la réponse JSON
+    const system = `You are Chef-AI, an expert chef and nutritionist. Always respond in VALID JSON ONLY (no extra text).
+Return a JSON object with exactly two top-level keys:
+- "answer": short text (1-2 sentences) as a chat reply to the user's question.
+- "recipe": an object with fields { "title", "desc", "ingredients" (array), "preparation", "cook", "calories", "img" }.
+If some fields are unknown, set them to an empty string or empty array. Use the language requested in the 'lang' parameter for both 'answer' and 'recipe' text.
+Do NOT include any commentary, only the JSON object.`;
+
+    const userContent = `User prompt: """${prompt}"""
+Sign: ${sign || 'unknown'}
+Meal: ${meal || 'unknown'}
+Lang: ${lang || 'fr'}
+Return the JSON object with recipe adapted to the sign and meal.`;
+
+    // Optional: set a server-side timeout controller for fetch
+    const controller = new AbortController();
+    const timeoutMs = 20000; // 20s
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+    // Call OpenAI Chat Completions endpoint (adjust model / endpoint as needed)
+    const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: 'gpt-4o-mini', // ou le modèle que tu préfères
         messages: [
-          {
-            role: "system",
-            content:
-              "Tu es Chef-AI d'AstroFood. Tu génères des recettes astrologiques inspirées du Sénégal, avec un titre, les ingrédients et les étapes courtes.",
-          },
-          {
-            role: "user",
-            content: `Prépare une recette complète adaptée au signe ${sign} (${lang}).`,
-          },
+          { role: 'system', content: system },
+          { role: 'user', content: userContent }
         ],
-        max_tokens: 300,
+        temperature: 0.8,
+        max_tokens: 700
       }),
+      signal: controller.signal
     });
 
-    const data = await response.json();
-    if (data.error) {
-      if (data.error.code === "insufficient_quota") {
-        return res.status(200).json({
-          ok: false,
-          text: `🔒 Quota OpenAI épuisé.
-Recette de secours pour ${sign} :
-• Titre : Yassa veggie citron & bissap
-• Ingrédients : oignons, citron, moutarde, poivron, piment doux, huile
-• Préparation : mariner 20 min, saisir 6–8 min, déglacer, mijoter 10 min.`,
-        });
-      }
-      return res.status(200).json({ ok: false, text: "❌ OpenAI : " + data.error.message });
+    clearTimeout(timeout);
+
+    if (!openaiRes.ok) {
+      const text = await openaiRes.text().catch(() => '');
+      console.error('OpenAI error', openaiRes.status, text);
+      return res.status(502).json({ error: `OpenAI error ${openaiRes.status}` });
     }
 
-    const text = data?.choices?.[0]?.message?.content || null;
-    if (!text) {
+    const json = await openaiRes.json();
+
+    // Extraire le texte renvoyé par le modèle
+    const raw = json.choices?.[0]?.message?.content ?? json.choices?.[0]?.text ?? null;
+    if (!raw) {
+      return res.status(500).json({ error: 'No content from OpenAI' });
+    }
+
+    // Tenter de parser JSON strict depuis la réponse
+    let parsed;
+    try {
+      // Parfois le modèle renvoie du code markdown; on nettoie
+      const firstBrace = raw.indexOf('{');
+      const lastBrace = raw.lastIndexOf('}');
+      const candidate = (firstBrace !== -1 && lastBrace !== -1) ? raw.slice(firstBrace, lastBrace + 1) : raw;
+      parsed = JSON.parse(candidate);
+    } catch (parseErr) {
+      // Si parsing échoue, on renvoie le texte dans answer pour debug, et recipe vide
+      console.warn('JSON parse failed, returning raw text as answer', parseErr);
       return res.status(200).json({
-        ok: false,
-        text: "⚠️ Réponse vide d’OpenAI.",
+        answer: String(raw).slice(0, 1500), // tronqué si trop long
+        recipe: {
+          title: '',
+          desc: '',
+          ingredients: [],
+          preparation: '',
+          cook: '',
+          calories: '',
+          img: ''
+        },
+        warning: 'failed_to_parse_json'
       });
     }
 
-    return res.status(200).json({ ok: true, text });
-  } catch (err) {
+    // Valider & normaliser parsed.recipe si nécessaire
+    const recipe = parsed.recipe || {};
+    const normalizedRecipe = {
+      title: recipe.title || '',
+      desc: recipe.desc || '',
+      ingredients: Array.isArray(recipe.ingredients) ? recipe.ingredients : (recipe.ingredients ? [String(recipe.ingredients)] : []),
+      preparation: recipe.preparation || '',
+      cook: recipe.cook || '',
+      calories: recipe.calories || '',
+      img: recipe.img || ''
+    };
+
+    // Fournir la réponse finale attendue côté client
     return res.status(200).json({
-      ok: false,
-      text: "❌ Erreur d'appel OpenAI : " + err.message,
+      answer: parsed.answer || '',
+      recipe: normalizedRecipe
     });
+
+  } catch (err) {
+    console.error('Server error', err);
+    if (err.name === 'AbortError') {
+      return res.status(504).json({ error: 'OpenAI request timed out' });
+    }
+    return res.status(500).json({ error: err.message || 'Server error' });
   }
 }
