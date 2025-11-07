@@ -463,6 +463,182 @@ function renderRecipeToUI(recipe, uiLang='fr'){
     
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-  </script>
+  <script>
+(() => {
+  // ====== Configuration ======
+  const API_ENDPOINT = '/api/chef-ai'; // endpoint backend (déjà sur ton projet)
+  // Traductions UI (tu peux modifier)
+  const UI = {
+    fr: { gen: "Générer recette", download: "Exporter PNG", placeholder: "Pas d'image", ingredients:"Ingrédients", preparation:"Préparation", cook:"Cuisson", calories:"Calories" },
+    en: { gen: "Generate recipe", download: "Export PNG", placeholder: "No image", ingredients:"Ingredients", preparation:"Preparation", cook:"Cook", calories:"Calories" },
+    ar: { gen: "توليد وصفة", download: "تنزيل PNG", placeholder: "لا توجد صورة", ingredients:"مكونات", preparation:"التحضير", cook:"الطهي", calories:"السعرات" }
+  };
+
+  // ====== DOM ======
+  const langSelect = document.getElementById('langSelect');
+  const mealSelect = document.getElementById('mealSelect');
+  const signInput = document.getElementById('signInput');
+  const generateBtn = document.getElementById('generateBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const statusEl = document.getElementById('status');
+
+  const recipeCard = document.getElementById('recipeCard');
+  const recipeImage = document.getElementById('recipeImage');
+  const imagePlaceholder = document.getElementById('imagePlaceholder');
+  const recipeTitle = document.getElementById('recipeTitle');
+  const recipeDesc = document.getElementById('recipeDesc');
+  const ingredientsList = document.getElementById('ingredientsList');
+  const preparationText = document.getElementById('preparationText');
+  const cookText = document.getElementById('cookText');
+  const calText = document.getElementById('calText');
+
+  // ====== Helpers ======
+  function setStatus(t) { statusEl.textContent = t || ''; }
+  function setLangUI(lang) {
+    const d = UI[lang] || UI.fr;
+    generateBtn.textContent = d.gen;
+    downloadBtn.textContent = d.download;
+    imagePlaceholder.textContent = d.placeholder;
+    // headings inside card (non-exhaustive; cards have hardcoded FR labels — optional to localize more)
+  }
+
+  function clearCard() {
+    recipeTitle.textContent = '';
+    recipeDesc.textContent = '';
+    ingredientsList.innerHTML = '';
+    preparationText.textContent = '';
+    cookText.textContent = '—';
+    calText.textContent = '—';
+    recipeImage.style.display = 'none';
+    recipeImage.src = '';
+    imagePlaceholder.style.display = 'flex';
+  }
+
+  function fillCardFromRecipe(obj, lang) {
+    // obj expected: title, description, ingredients[], preparation, cook, calories, image_url or image_base64
+    recipeTitle.textContent = obj.title || (lang === 'ar' ? 'وصفة' : 'Recette');
+    recipeDesc.textContent = obj.description || '';
+    // ingredients
+    ingredientsList.innerHTML = '';
+    if (Array.isArray(obj.ingredients)) {
+      obj.ingredients.forEach(i => {
+        const li = document.createElement('li');
+        li.textContent = i;
+        ingredientsList.appendChild(li);
+      });
+    } else if (typeof obj.ingredients === 'string') {
+      const li = document.createElement('li'); li.textContent = obj.ingredients; ingredientsList.appendChild(li);
+    }
+    preparationText.textContent = obj.preparation || '';
+    cookText.textContent = obj.cook || '—';
+    calText.textContent = obj.calories || '—';
+
+    // image handling
+    if (obj.image_url) {
+      recipeImage.src = obj.image_url;
+      recipeImage.onload = () => { recipeImage.style.display = 'block'; imagePlaceholder.style.display = 'none'; };
+      recipeImage.onerror = () => { recipeImage.style.display = 'none'; imagePlaceholder.style.display = 'flex'; };
+    } else if (obj.image_base64) {
+      recipeImage.src = obj.image_base64; // should be data:image/png;base64,...
+      recipeImage.style.display = 'block'; imagePlaceholder.style.display = 'none';
+    } else {
+      recipeImage.style.display = 'none';
+      imagePlaceholder.style.display = 'flex';
+    }
+
+    // set direction for arabic
+    if (lang === 'ar') {
+      recipeCard.style.direction = 'rtl';
+      recipeCard.style.textAlign = 'right';
+    } else {
+      recipeCard.style.direction = 'ltr';
+      recipeCard.style.textAlign = 'left';
+    }
+  }
+
+  // ====== Generate function ======
+  async function generateRecipe() {
+    const lang = langSelect.value || 'fr';
+    const meal = mealSelect.value || 'breakfast';
+    const sign = signInput.value || '';
+
+    setLangUI(lang);
+    setStatus('Génération…');
+    generateBtn.disabled = true;
+    downloadBtn.disabled = true;
+
+    clearCard();
+
+    try {
+      const payload = { prompt: "génère une recette complète en JSON", lang, meal, sign };
+      const r = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!r.ok) {
+        const txt = await r.text();
+        setStatus('Erreur serveur: ' + r.status);
+        console.error('API error', r.status, txt);
+        generateBtn.disabled = false;
+        return;
+      }
+
+      const json = await r.json();
+      if (!json.ok || !json.recipe) {
+        setStatus('Réponse invalide');
+        console.error('Invalid response', json);
+        generateBtn.disabled = false;
+        return;
+      }
+
+      fillCardFromRecipe(json.recipe, lang);
+      setStatus('Recette générée');
+      downloadBtn.disabled = false;
+    } catch (e) {
+      console.error(e);
+      setStatus('Erreur réseau');
+    } finally {
+      generateBtn.disabled = false;
+    }
+  }
+
+  // ====== Download via html2canvas ======
+  async function downloadCardPNG() {
+    setStatus('Préparation image…');
+    downloadBtn.disabled = true;
+    try {
+      // small style tweak before screenshot (e.g., remove buttons if inside card)
+      const node = recipeCard;
+      const canvas = await html2canvas(node, { scale: 2, useCORS: true, logging: false });
+      const dataUrl = canvas.toDataURL('image/png');
+
+      // trigger download
+      const a = document.createElement('a');
+      const filenameBase = (recipeTitle.textContent || 'recipe').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/ig,'');
+      a.href = dataUrl;
+      a.download = `${filenameBase || 'recipe'}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setStatus('PNG généré');
+    } catch (err) {
+      console.error('html2canvas error', err);
+      setStatus('Erreur export');
+    } finally {
+      downloadBtn.disabled = false;
+    }
+  }
+
+  // ====== Event listeners ======
+  generateBtn.addEventListener('click', generateRecipe);
+  downloadBtn.addEventListener('click', downloadCardPNG);
+  langSelect.addEventListener('change', () => setLangUI(langSelect.value));
+
+  // set default UI
+  setLangUI(langSelect.value);
+})();
+</script>
 </body>
 </html>
